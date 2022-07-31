@@ -396,6 +396,8 @@ class Select {
             options.querySelector(`span[data-value="${this.turbo.getData(selectedElement, 'value')}"]`).classList.add('active');
             realSelect.value = selectedValue;
             selectWrapper.dataset['selected'] = selectedValue;
+
+            this.triggerChangeEvent(realSelect);
         }
 
         this.turbo.toggleAnimationClass(options, 'animation-slide-out-top', 150);
@@ -405,6 +407,11 @@ class Select {
         }, 150);
 
         options.classList.remove('opened');
+    }
+
+    triggerChangeEvent(select) {
+        const event = new Event('change');
+        select.dispatchEvent(event);
     }
 
     /**
