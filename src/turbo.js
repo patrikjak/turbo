@@ -36,6 +36,7 @@ class Turbo {
             select: {
                 searchAlsoValue: false,
                 notFoundOptionValue: '-',
+                hideDisabledOptions: false,
             }
         };
     }

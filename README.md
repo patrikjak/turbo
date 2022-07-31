@@ -38,9 +38,10 @@ turbo.settings.notification.autoHide = true;
 turbo.settings.notification.autoHideTime = 4000;
 turbo.settings.notification.showCloseButton = true;
 
-// custom select
+// turbo select
 turbo.settings.select.searchAlsoValue = false;
 turbo.settings.select.notFoundOptionValue = '-';
+turbo.settings.select.hideDisabledOptions = false;
 ```
 
 ## Methods

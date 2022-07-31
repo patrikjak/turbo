@@ -1,9 +1,10 @@
+const turboClass = require("./turbo");
+
 class Select {
 
     constructor() {
         const turboClass = require('./turbo');
-        const turboInstance = new turboClass();
-        this.turbo = turboInstance;
+        this.turbo = new turboClass();
     }
 
     /**
@@ -85,20 +86,42 @@ class Select {
 
         for (let i = 0; i < options.length; i++) {
             const realOption = options[i];
+            let disabled = false;
+
+            if (realOption.hasAttribute('disabled')) {
+                disabled = true;
+            }
 
             if (realOption) {
                 const optionText = realOption.textContent;
-                const optionValue = realOption.value
+                const optionValue = realOption.value;
+                const optionClass = [];
 
-                const option = this.turbo.createElement('span', optionText, {
+                let optionAttributes = {
                     dataset: {
                         value: optionValue,
+                    },
+                };
+
+                if (disabled) {
+
+                    if (this.turbo.settings.select.hideDisabledOptions) {
+                        continue;
                     }
-                });
+
+                    optionClass.push('disabled');
+
+                    optionAttributes.class = optionClass;
+                }
+
+                const option = this.turbo.createElement('span', optionText, optionAttributes);
 
                 defaultOptions.push({
                     text: optionText,
                     value: optionValue,
+                    attributes: {
+                        class: optionClass
+                    },
                 });
 
                 this.turbo.showElement(option, optionsWrapper, 'append', 'block', {});
@@ -179,7 +202,11 @@ class Select {
                 if (e.target.nodeName === 'DIV' || e.target.nodeName === 'INPUT') {
                     this.toggleOptions(e, turboSelect);
                 } else {
-                    this.closeOptions(turboSelect.querySelector('.options'), e.target);
+                    const disabledOption = e.target.classList.contains('disabled');
+
+                    if (!disabledOption) {
+                        this.closeOptions(turboSelect.querySelector('.options'), e.target);
+                    }
                 }
             });
 
@@ -466,19 +493,19 @@ class Select {
             const optionText = options[i].text;
             const searchableText = optionText.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
             const searchableValue = optionValue.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+
+            const optionData = {
+                value: optionValue,
+                text: optionText,
+                attributes: options[i].attributes,
+            };
             
             if (searchableText.indexOf(searchFor) > -1) {
-                filtered[i] = {
-                    value: optionValue,
-                    text: optionText,
-                };
+                filtered[i] = optionData;
             }
 
             if (this.turbo.settings.select.searchAlsoValue && searchableValue.indexOf(searchFor) > -1 && this.turbo.isEmpty(filtered[i])) {
-                filtered[i] = {
-                    value: optionValue,
-                    text: optionText,
-                };
+                filtered[i] = optionData;
             }
         }
 
@@ -510,12 +537,27 @@ class Select {
         } else {
             for (let i = 0; i < options.length; i++) {
                 const option = options[i];
+                const disabledOption = option.attributes?.class.includes('disabled');
+                let disabled = false;
+
+                if (disabledOption) {
+
+                    if (this.turbo.settings.select.hideDisabledOptions) {
+                        continue;
+                    }
+
+                    disabled = true;
+                }
 
                 const optionAttributes = {
                     dataset: {
                         value: option.value,
                     },
                 };
+
+                if (disabled) {
+                    optionAttributes.class = ['disabled'];
+                }
 
                 if (selectedValue && option.value === selectedValue) {
                     optionAttributes.class = ['active'];
