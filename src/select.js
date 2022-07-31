@@ -1,5 +1,3 @@
-const turboClass = require("./turbo");
-
 class Select {
 
     constructor() {
@@ -204,15 +202,21 @@ class Select {
                 } else {
                     const disabledOption = e.target.classList.contains('disabled');
 
-                    if (!disabledOption) {
+                    if (!disabledOption && this.turbo.getData(e.target, 'value') !== this.turbo.settings.select.notFoundOptionValue) {
                         this.closeOptions(turboSelect.querySelector('.options'), e.target);
                     }
                 }
             });
 
             turboSelectWrapper.querySelector('.turbo-select .dropdown-arrow').addEventListener('click', e => {
-                this.toggleOptions(e, e.target.closest('.turbo-ui .turbo-select'));
                 e.stopPropagation();
+                this.toggleOptions(e, e.target.closest('.turbo-ui .turbo-select'));
+            });
+
+            turboSelectWrapper.querySelector('label').addEventListener('click', e => {
+                e.stopPropagation();
+                e.preventDefault();
+                this.toggleOptions(e, turboSelectWrapper.querySelector('.turbo-select'));
             });
         }
     }
