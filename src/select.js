@@ -118,7 +118,7 @@ class Select {
                     text: optionText,
                     value: optionValue,
                     attributes: {
-                        class: optionClass
+                        class: optionClass,
                     },
                 });
 
@@ -587,9 +587,17 @@ class Select {
      * @param searchable
      */
     selectFirstOption(optionsElement, searchable) {
-        const firstOption = optionsElement.querySelectorAll('span')[0];
+        const options = optionsElement.querySelectorAll('span');
+        let firstOption = null;
 
-        if (searchable) {
+        for (let i = 0; i < options.length; i++) {
+            if (!options[i].classList.contains('disabled')) {
+                firstOption = options[i];
+                break;
+            }
+        }
+
+        if (searchable && firstOption) {
             this.closeOptions(optionsElement, firstOption);
         }
     }
