@@ -3,6 +3,8 @@ class Select {
     constructor() {
         const turboClass = require('./turbo');
         this.turbo = new turboClass();
+        this.selects = {};
+        this.custom = {};
     }
 
     /**
@@ -41,6 +43,8 @@ class Select {
         const realSelect = turboSelectWrapper.querySelector('select');
         const realLabel = turboSelectWrapper.querySelector('label');
         const searchable = realSelect.classList.contains('searchable');
+        const wrapperId = turboSelectWrapper.getAttribute('id');
+        const customSettings = this.custom[wrapperId]?.settings;
 
         const options = Array.from(realSelect.options);
 
@@ -103,7 +107,7 @@ class Select {
 
                 if (disabled) {
 
-                    if (this.turbo.settings.select.hideDisabledOptions) {
+                    if ((this.turbo.settings.select.hideDisabledOptions && !customSettings) || customSettings?.hideDisabledOptions) {
                         continue;
                     }
 
@@ -143,47 +147,28 @@ class Select {
 
         this.turbo.showElement(turboSelectElement, turboSelectWrapper, 'append', 'flex', {});
 
-        this.setDefaultOptions(defaultOptions, id, reloadDefaults);
+        this.createInstance(defaultOptions, id);
     }
 
     /**
-     * set default options to sessionStorage
+     * create select instances with select info
      * @param options
-     * @param selectId
-     * @param refresh
+     * @param id
      */
-    setDefaultOptions(options, selectId, refresh) {
-        const allDefaults = sessionStorage.getItem('turbo-select');
+    createInstance(options, id) {
+        const select = document.querySelector(`#${id}`);
+        const wrapperId = select.closest('.turbo-ui.select').getAttribute('id');
 
-        if (allDefaults) {
-            sessionStorage.setItem('turbo-select', JSON.stringify({}));
+        this.selects[id] = {
+            id: id,
+            wrapper: select,
+            options: options,
+            settings: {
+                searchAlsoValue: wrapperId && this.custom[wrapperId]?.settings?.searchAlsoValue ? this.custom[wrapperId]?.settings?.searchAlsoValue : this.turbo.settings.select.searchAlsoValue,
+                notFoundOptionValue: wrapperId && this.custom[wrapperId]?.settings?.notFoundOptionValue ? this.custom[wrapperId]?.settings?.notFoundOptionValue : this.turbo.settings.select.notFoundOptionValue,
+                hideDisabledOptions: wrapperId && this.custom[wrapperId]?.settings?.hideDisabledOptions ? this.custom[wrapperId]?.settings?.hideDisabledOptions : this.turbo.settings.select.hideDisabledOptions,
+            },
         }
-
-        const parsedAllDefaults = JSON.parse(allDefaults);
-        const defaultOptions = {};
-
-        if (!refresh) {
-            for (let existingSelectId in parsedAllDefaults) {
-                defaultOptions[existingSelectId] = parsedAllDefaults[existingSelectId];
-            }
-        }
-
-        defaultOptions[selectId] = options;
-
-        sessionStorage.setItem('turbo-select', JSON.stringify(defaultOptions));
-    }
-
-    /**
-     * get default options for select with specific id
-     * @param selectId
-     * @return {*[]}
-     */
-    getDefaultOptions(selectId) {
-        let defaults = sessionStorage.getItem('turbo-select');
-
-        defaults = JSON.parse(defaults);
-
-        return defaults[selectId] ?? [];
     }
 
     /**
@@ -191,9 +176,12 @@ class Select {
      * @param turboSelectWrapper
      */
     bindOpenOptions(turboSelectWrapper) {
-        if (turboSelectWrapper.querySelector('.turbo-select')) {
+        const selectWrapper = turboSelectWrapper.querySelector('.turbo-select');
+
+        if (selectWrapper) {
             turboSelectWrapper.querySelector('.turbo-select .options-wrapper').addEventListener('click', e => {
                 const turboSelect = e.target.closest('.turbo-ui .turbo-select');
+                const wrapperId = selectWrapper.getAttribute('id');
 
                 e.stopPropagation();
 
@@ -202,7 +190,7 @@ class Select {
                 } else {
                     const disabledOption = e.target.classList.contains('disabled');
 
-                    if (!disabledOption && this.turbo.getData(e.target, 'value') !== this.turbo.settings.select.notFoundOptionValue) {
+                    if (!disabledOption && this.turbo.getData(e.target, 'value') !== this.selects[wrapperId].settings.notFoundOptionValue) {
                         this.closeOptions(turboSelect.querySelector('.options'), e.target);
                     }
                 }
@@ -232,6 +220,7 @@ class Select {
         const searchable = selectWrapper.querySelector('select').classList.contains('searchable');
         const optionsClasses = options.classList;
         const open = !optionsClasses.contains('opened');
+        const turboWrapperId = turboSelect.getAttribute('id');
 
         if (open) {
             this.openOptions(options);
@@ -241,7 +230,7 @@ class Select {
             let selectedText = '';
 
             if (searchable && this.turbo.getData(turboSelect, 'selected') ||
-                (optionElements.length === 1 && this.turbo.getData(optionElements[0], 'value') === this.turbo.settings.select.notFoundOptionValue)) {
+                (optionElements.length === 1 && this.turbo.getData(optionElements[0], 'value') === this.selects[turboWrapperId].settings.notFoundOptionValue)) {
 
                 if (e.target.classList.contains('dropdown-arrow')) {
                     this.closeOptions(options, (this.findSelected(options, true)));
@@ -308,6 +297,7 @@ class Select {
             if (options.classList.contains('opened')) {
                 if (searchable) {
                     const selectWrapper = options.closest('.turbo-select');
+                    const wrapperId = selectWrapper.getAttribute('id');
 
                     const label = options.closest('.options-wrapper').querySelector('span.label');
                     const searchInput = label.querySelector('#options-search');
@@ -315,8 +305,9 @@ class Select {
                     const selectedValue = turbo.getData(selectWrapper, 'selected');
 
                     if (!selectedValue) {
-                        const defaultOptions = _this.getDefaultOptions(options.closest('.turbo-select').id);
-                        const founded = _this.selectFilter(searchInput.value.toLowerCase(), defaultOptions, true);
+                        const defaultOptions = _this.selects[options.closest('.turbo-select').id].options;
+
+                        const founded = _this.selectFilter(searchInput.value.toLowerCase(), defaultOptions, true, wrapperId);
 
                         if (!turbo.isEmpty(founded)) {
                             return _this.selectFirstOption(options, true);
@@ -422,12 +413,13 @@ class Select {
     resetOptions(selectWrapper, selectedElement = null) {
         const optionsWrapper = selectWrapper.querySelector('.options');
         const options = optionsWrapper.querySelectorAll('span');
+        const selectWrapperId = selectWrapper.getAttribute('id');
 
         for (let i = 0; i < options.length; i++) {
             options[i].remove();
         }
 
-        const defaultOptions = this.getDefaultOptions(selectWrapper.getAttribute('id'));
+        const defaultOptions = this.selects[selectWrapperId].options;
 
         this.showFilteredOptions(optionsWrapper, defaultOptions, selectedElement, false);
     }
@@ -465,7 +457,7 @@ class Select {
     filterOptions(searchInput, originValue, selectedValue = null) {
         const selectId = searchInput.closest('.turbo-select').id;
         const optionsElement = searchInput.closest('.options-wrapper').querySelector('.options');
-        const defaultOptions = this.getDefaultOptions(selectId);
+        const defaultOptions = this.selects[selectId].options;
 
         if (originValue === '') {
             this.showFilteredOptions(optionsElement, defaultOptions, selectedValue);
@@ -473,7 +465,7 @@ class Select {
 
         searchInput.addEventListener('input', () => {
             let searchFor = searchInput.value.toLowerCase();
-            let filteredOptions = this.selectFilter(searchFor, defaultOptions);
+            let filteredOptions = this.selectFilter(searchFor, defaultOptions, false, selectId);
 
             if (searchFor !== '') {
                 searchInput.closest('.label').classList.add('selected');
@@ -486,13 +478,14 @@ class Select {
     }
 
     /**
-     * Filter options
+     * filter options
      * @param searchFor
      * @param options
      * @param realFilter means empty searchFor returns empty array
+     * @param wrapperId
      * @return {*[]}
      */
-    selectFilter(searchFor, options, realFilter = false) {
+    selectFilter(searchFor, options, realFilter = false, wrapperId = '') {
         let filtered = [];
 
         if (realFilter && searchFor === '') {
@@ -515,7 +508,7 @@ class Select {
                 filtered[i] = optionData;
             }
 
-            if (this.turbo.settings.select.searchAlsoValue && searchableValue.indexOf(searchFor) > -1 && this.turbo.isEmpty(filtered[i])) {
+            if (this.selects[wrapperId].settings.searchAlsoValue && searchableValue.indexOf(searchFor) > -1 && this.turbo.isEmpty(filtered[i])) {
                 filtered[i] = optionData;
             }
         }
@@ -524,7 +517,6 @@ class Select {
     }
 
     /**
-     *
      * @param optionsElement
      * @param options
      * @param selectedValue
@@ -532,6 +524,8 @@ class Select {
      */
     showFilteredOptions(optionsElement, options, selectedValue = null, show = true) {
         const optionElements = optionsElement.querySelectorAll('span');
+        const selectWrapper = optionsElement.closest('.turbo-select');
+        const wrapperId = selectWrapper.getAttribute('id');
 
         for (let i = 0; i < optionElements.length; i++) {
             optionElements[i].remove();
@@ -540,7 +534,7 @@ class Select {
         if (this.turbo.isEmpty(options)) {
             const option = this.turbo.createElement('span', this.turbo.settings.text.notFound, {
                 dataset: {
-                    value: this.turbo.settings.select.notFoundOptionValue,
+                    value: this.selects[wrapperId].settings.notFoundOptionValue,
                 },
             });
 
@@ -553,7 +547,7 @@ class Select {
 
                 if (disabledOption) {
 
-                    if (this.turbo.settings.select.hideDisabledOptions) {
+                    if (this.selects[wrapperId].settings.hideDisabledOptions) {
                         continue;
                     }
 
