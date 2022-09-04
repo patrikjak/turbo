@@ -109,6 +109,15 @@ class Turbo {
     }
 
     /**
+     * check if variable is object
+     * @param variable
+     * @return {boolean}
+     */
+    isObject(variable) {
+        return typeof variable === 'object' && !Array.isArray(variable) && variable !== null;
+    }
+
+    /**
      * Check if variable is empty
      * @param variable
      * @returns {boolean}
@@ -116,7 +125,7 @@ class Turbo {
     isEmpty(variable) {
         if (Array.isArray(variable)) {
             return variable.length === 0;
-        } else if (typeof variable === 'object' && !Array.isArray(variable) && variable !== null) {
+        } else if (this.isObject(variable)) {
             return Object.keys(variable).length === 0;
         }
 

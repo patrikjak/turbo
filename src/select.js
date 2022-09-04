@@ -2,77 +2,112 @@ class Select {
 
     constructor() {
         const turboClass = require('./turbo');
+
         this.turbo = new turboClass();
         this.selects = {};
         this.custom = {};
+        this.animationSettings = {
+            open: 'animation-slide-in-top',
+            close: 'animation-slide-out-top',
+            duration: 150,
+        }
     }
 
-    /**
-     * init custom selects
-     * hide original select element and show custom
-     * original select element must be in wrapper with classes .turbo-ui.select
-     * if original select has .searchable class, custom select will be searchable
-     * additional rendered select element should be initiated with reloadDefaults parameter set to true
-     * @param selector
-     * @param reloadDefaults
-     */
-    initSelects(selector = document, reloadDefaults = false) {
-        const selects = selector.querySelectorAll('.turbo-ui.select');
+    initSelects() {
+        const selects = document.querySelectorAll('.turbo-ui.select');
 
         if (selects) {
             for (let i = 0; i < selects.length; i++) {
                 const turboSelectWrapper = selects[i];
-                const select = turboSelectWrapper.querySelector('select');
+                const selectElement = turboSelectWrapper.querySelector('select');
 
-                if (select) {
-                    const selectId = `turbo-select-${i + 1}`;
-                    this.makeCustomSelect(turboSelectWrapper, selectId, reloadDefaults);
-                    this.bindOpenOptions(turboSelectWrapper);
+                if (selectElement) {
+                    const turboSelectId = `turbo-select-${i + 1}`;
+                    this.generateTurboSelect(turboSelectWrapper, turboSelectId);
+                    this.bindSelectActions(turboSelectWrapper);
                 }
             }
         }
     }
 
-    /**
-     * create html elements for select and append it after original select element
-     * @param turboSelectWrapper
-     * @param id
-     * @param reloadDefaults
-     */
-    makeCustomSelect(turboSelectWrapper, id, reloadDefaults) {
+    generateTurboSelect(turboSelectWrapper, turboSelectId) {
         const realSelect = turboSelectWrapper.querySelector('select');
         const realLabel = turboSelectWrapper.querySelector('label');
         const searchable = realSelect.classList.contains('searchable');
+        const multiselect = realSelect.classList.contains('multiselect');
         const wrapperId = turboSelectWrapper.getAttribute('id');
         const customSettings = this.custom[wrapperId]?.settings;
-
         const options = Array.from(realSelect.options);
+        const selectOptions = {
+            searchable: searchable,
+            multiselect: multiselect,
+        }
+        const mainElements = this.generateMainElements(turboSelectId, selectOptions, realLabel.textContent);
+        const defaultOptions = this.getOptionsInfo(options, customSettings);
+        const generatedOptions = this.generateOptions(defaultOptions);
 
+        this.showOptionsInWrapper(mainElements.optionsWrapper, generatedOptions);
+
+        this.turbo.showElement(mainElements.label, mainElements.selectionWrapper, 'prepend', 'block', {});
+        this.turbo.showElement(mainElements.optionsWrapper, mainElements.selectionWrapper, 'append', 'none', {});
+        this.turbo.showElement(mainElements.selectionWrapper, mainElements.turboSelectElement, 'append', 'flex', {});
+        this.turbo.showElement(mainElements.arrow, mainElements.turboSelectElement, 'append', 'flex', {});
+
+        // final select
+        this.turbo.showElement(mainElements.turboSelectElement, turboSelectWrapper, 'append', 'flex', {});
+
+        this.createInstance(defaultOptions, turboSelectId, (mainElements.label ? realLabel.textContent : null), searchable, multiselect);
+    }
+
+    generateMainElements(turboSelectId, selectOptions, labelText) {
         const turboSelectElement = this.turbo.createElement('div', null, {
             class: ['turbo-select'],
-            id: id,
+            id: turboSelectId,
         });
 
         const selectionWrapper = this.turbo.createElement('div', null, {
             class: ['options-wrapper'],
         });
 
+        const label = this.generateLabel(labelText, selectOptions.searchable);
+
+        const optionsWrapper = this.turbo.createElement('div', null, {
+            class: ['options'],
+        });
+
+        const arrow = this.turbo.createElement('div', null, {
+            class: ['dropdown-arrow'],
+        });
+
+        for (let i = 0; i < 2; i++) {
+            this.turbo.showElement(this.turbo.createElement('div', null, {
+                class: ['arrow-part'],
+            }), arrow, 'append', 'block', {});
+        }
+
+        return {
+            turboSelectElement: turboSelectElement,
+            selectionWrapper: selectionWrapper,
+            label: label,
+            optionsWrapper: optionsWrapper,
+            arrow: arrow,
+        };
+    }
+
+    generateLabel(labelText, searchable) {
         const labelClasses = ['label'];
 
         if (searchable) {
             labelClasses.push('search');
         }
 
-        const label = this.turbo.createElement('span', (searchable ? null : realLabel.textContent), {
+        const label = this.turbo.createElement('div', (searchable ? null : labelText), {
             class: labelClasses,
-            dataset: {
-                default: realLabel.textContent,
-            }
         });
 
         if (searchable) {
             const searchInput = this.turbo.createElement('input', null, {
-                placeholder: realLabel.textContent,
+                placeholder: labelText,
                 id: 'options-search',
                 autocomplete: 'off'
             });
@@ -80,14 +115,31 @@ class Select {
             this.turbo.showElement(searchInput, label, 'append', 'block', {});
         }
 
-        const optionsWrapper = this.turbo.createElement('div', null, {
-            class: ['options'],
-        });
+        return label
+    }
 
-        const defaultOptions = [];
+    generateNotFoundOptionInfo(selectId) {
+        const value = this.selects[selectId].settings.notFoundOptionValue;
 
-        for (let i = 0; i < options.length; i++) {
-            const realOption = options[i];
+        return {
+            text: this.turbo.settings.text.notFound,
+            value: value,
+            attributes: {
+                dataset: {
+                    value: value,
+                },
+                class: ['disabled', 'not-found-option'],
+            },
+            disabled: true,
+            notFoundOption: true,
+        };
+    }
+
+    getOptionsInfo(arrayOfRealOptions, customSelectSettings) {
+        const optionsInfo = [];
+
+        for (let i = 0; i < arrayOfRealOptions.length; i++) {
+            const realOption = arrayOfRealOptions[i];
             let disabled = false;
 
             if (realOption.hasAttribute('disabled')) {
@@ -97,307 +149,364 @@ class Select {
             if (realOption) {
                 const optionText = realOption.textContent;
                 const optionValue = realOption.value;
-                const optionClass = [];
 
                 let optionAttributes = {
                     dataset: {
                         value: optionValue,
                     },
+                    class: [],
                 };
 
                 if (disabled) {
-
-                    if ((this.turbo.settings.select.hideDisabledOptions && !customSettings) || customSettings?.hideDisabledOptions) {
+                    if ((this.turbo.settings.select.hideDisabledOptions && !customSelectSettings) || customSelectSettings?.hideDisabledOptions) {
                         continue;
                     }
 
-                    optionClass.push('disabled');
-
-                    optionAttributes.class = optionClass;
+                    optionAttributes.class = ['disabled'];
                 }
 
-                const option = this.turbo.createElement('span', optionText, optionAttributes);
-
-                defaultOptions.push({
+                optionsInfo.push({
                     text: optionText,
                     value: optionValue,
                     attributes: {
-                        class: optionClass,
+                        class: optionAttributes.class,
+                        dataset: optionAttributes.dataset,
                     },
+                    disabled: disabled,
                 });
-
-                this.turbo.showElement(option, optionsWrapper, 'append', 'block', {});
             }
         }
 
-        const arrow = this.turbo.createElement('div', null, {
-            class: ['dropdown-arrow'],
-        });
-
-        for (let i = 0; i < 2; i++) {
-            this.turbo.showElement(this.turbo.createElement('span', null, {
-                class: ['arrow-part']
-            }), arrow, 'append', 'block', {});
-        }
-
-        this.turbo.showElement(label, selectionWrapper, 'prepend', 'block', {});
-        this.turbo.showElement(optionsWrapper, selectionWrapper, 'append', 'none', {});
-        this.turbo.showElement(selectionWrapper, turboSelectElement, 'append', 'flex', {});
-        this.turbo.showElement(arrow, turboSelectElement, 'append', 'flex', {});
-
-        this.turbo.showElement(turboSelectElement, turboSelectWrapper, 'append', 'flex', {});
-
-        this.createInstance(defaultOptions, id);
+        return optionsInfo;
     }
 
-    /**
-     * create select instances with select info
-     * @param options
-     * @param id
-     */
-    createInstance(options, id) {
+    generateOptions(options) {
+        const arrayOfOptions = [];
+
+        for (let i = 0; i < options.length; i++) {
+            const option = options[i];
+
+            arrayOfOptions.push(this.turbo.createElement('div', option.text, option.attributes));
+        }
+
+        return arrayOfOptions;
+    }
+
+    showOptionsInWrapper(wrapper, arrayOfOptions) {
+        for (let i = 0; i < arrayOfOptions.length; i++) {
+            this.turbo.showElement(arrayOfOptions[i], wrapper, 'append', 'block', {});
+        }
+    }
+
+    createInstance(options, id, defaultLabel, searchable, multiselect) {
         const select = document.querySelector(`#${id}`);
-        const wrapperId = select.closest('.turbo-ui.select').getAttribute('id');
+        const turboSelectWrapper = select.closest('.turbo-ui.select');
+        const wrapperId = turboSelectWrapper.getAttribute('id');
 
         this.selects[id] = {
             id: id,
+            wrapperId: wrapperId && this.custom[wrapperId]?.customId ? this.custom[wrapperId]?.customId : null,
             wrapper: select,
+            defaultOptions: options,
             options: options,
             settings: {
                 searchAlsoValue: wrapperId && this.custom[wrapperId]?.settings?.searchAlsoValue ? this.custom[wrapperId]?.settings?.searchAlsoValue : this.turbo.settings.select.searchAlsoValue,
                 notFoundOptionValue: wrapperId && this.custom[wrapperId]?.settings?.notFoundOptionValue ? this.custom[wrapperId]?.settings?.notFoundOptionValue : this.turbo.settings.select.notFoundOptionValue,
                 hideDisabledOptions: wrapperId && this.custom[wrapperId]?.settings?.hideDisabledOptions ? this.custom[wrapperId]?.settings?.hideDisabledOptions : this.turbo.settings.select.hideDisabledOptions,
             },
-        }
+            defaultLabel: defaultLabel,
+            selectedOption: null,
+            searchable: searchable,
+            multiselect: multiselect,
+        };
     }
 
-    /**
-     * bind opening
-     * @param turboSelectWrapper
-     */
-    bindOpenOptions(turboSelectWrapper) {
+    isSearchable(selectId) {
+        return this.selects[selectId].searchable;
+    }
+
+    isMultiselect(selectId) {
+        return this.selects[selectId].multiselect;
+    }
+
+    bindSelectActions(turboSelectWrapper) {
         const selectWrapper = turboSelectWrapper.querySelector('.turbo-select');
 
         if (selectWrapper) {
-            turboSelectWrapper.querySelector('.turbo-select .options-wrapper').addEventListener('click', e => {
-                const turboSelect = e.target.closest('.turbo-ui .turbo-select');
-                const wrapperId = selectWrapper.getAttribute('id');
+            const optionsWrapper = turboSelectWrapper.querySelector('.turbo-select .options-wrapper');
+            const options = optionsWrapper.querySelectorAll('.options div');
+            const dropdownArrow = turboSelectWrapper.querySelector('.turbo-select .dropdown-arrow');
+            const selectId = selectWrapper.id;
 
+            optionsWrapper.addEventListener('click', e => {
                 e.stopPropagation();
-
-                if (e.target.nodeName === 'DIV' || e.target.nodeName === 'INPUT') {
-                    this.toggleOptions(e, turboSelect);
-                } else {
-                    const disabledOption = e.target.classList.contains('disabled');
-
-                    if (!disabledOption && this.turbo.getData(e.target, 'value') !== this.selects[wrapperId].settings.notFoundOptionValue) {
-                        this.closeOptions(turboSelect.querySelector('.options'), e.target);
-                    }
-                }
+                this.toggleOptions(turboSelectWrapper, selectId);
             });
 
-            turboSelectWrapper.querySelector('.turbo-select .dropdown-arrow').addEventListener('click', e => {
+            dropdownArrow.addEventListener('click', e => {
                 e.stopPropagation();
-                this.toggleOptions(e, e.target.closest('.turbo-ui .turbo-select'));
+                this.toggleOptions(turboSelectWrapper, selectId);
             });
 
-            turboSelectWrapper.querySelector('label').addEventListener('click', e => {
+            this.bindSelection(options, selectId);
+
+            if (this.isSearchable(selectId)) {
+                const searchInput = optionsWrapper.querySelector('#options-search');
+
+                this.bindFiltering(searchInput, selectId);
+            }
+        }
+    }
+
+    bindSelection(options, selectId) {
+        for (let i = 0; i < options.length; i++) {
+            const option = options[i];
+
+            option.addEventListener('click', e => {
                 e.stopPropagation();
-                e.preventDefault();
-                this.toggleOptions(e, turboSelectWrapper.querySelector('.turbo-select'));
+                this.selectOption(option, selectId);
             });
         }
     }
 
-    /**
-     * open and close options
-     * @param e event
-     * @param turboSelect
-     */
-    toggleOptions(e, turboSelect) {
-        const options = turboSelect.querySelector('.options');
-        const selectWrapper = turboSelect.closest('.turbo-ui.select');
-        const searchable = selectWrapper.querySelector('select').classList.contains('searchable');
-        const optionsClasses = options.classList;
-        const open = !optionsClasses.contains('opened');
-        const turboWrapperId = turboSelect.getAttribute('id');
+    toggleOptions(turboSelectWrapper, selectId) {
+        const options = turboSelectWrapper.querySelector('.options');
+        const open = !options.classList.contains('opened');
 
         if (open) {
-            this.openOptions(options);
+            this.openOptions(options, selectId);
         } else {
-            const optionElements = options.querySelectorAll('span');
-            let selectedElement = null;
-            let selectedText = '';
-
-            if (searchable && this.turbo.getData(turboSelect, 'selected') ||
-                (optionElements.length === 1 && this.turbo.getData(optionElements[0], 'value') === this.selects[turboWrapperId].settings.notFoundOptionValue)) {
-
-                if (e.target.classList.contains('dropdown-arrow')) {
-                    this.closeOptions(options, (this.findSelected(options, true)));
-                }
-
-                return;
-            }
-
-            for (let i = 0; i < optionElements.length; i++) {
-                const option = optionElements[i];
-
-                if (option.classList.contains('active')) {
-                    selectedElement = option;
-                    selectedText = option.textContent;
-                }
-            }
-
-            if (searchable) {
-                if (!this.turbo.isEmpty(selectedText)) {
-                    turboSelect.querySelector('input#options-search').value = selectedText;
-                }
-            }
-
-            this.closeOptions(options, selectedElement);
+            this.reselectOption(selectId);
+            this.closeOptions(options);
         }
     }
 
-    /**
-     * open options and bind close on clicking away
-     * @param options
-     */
-    openOptions(options) {
-        const wrapper = options.closest('.turbo-ui.select');
-        const searchable = wrapper.querySelector('select').classList.contains('searchable');
+    openOptions(options, selectId) {
+        const searchable = this.isSearchable(selectId);
 
         if (searchable) {
             const label = options.closest('.options-wrapper').querySelector('.label');
             const searchInput = label.querySelector('#options-search');
-            const text = searchInput.value;
-            const selectedOption = this.findSelected(options);
+            const actualValue = searchInput.value;
 
-            if (!this.turbo.isEmpty(text)) {
+            if (!this.turbo.isEmpty(actualValue)) {
                 searchInput.value = '';
-                searchInput.setAttribute('placeholder', text);
+                searchInput.setAttribute('placeholder', actualValue);
             }
-
-            label.classList.remove('selected');
-
-            this.filterOptions(searchInput, searchInput.value, selectedOption);
         }
 
-        this.turbo.toggleAnimationClass(options, 'animation-slide-in-top', 150);
-
+        this.turbo.toggleAnimationClass(options, 'animation-slide-in-top', this.animationSettings.duration);
         options.style.display = 'block';
         options.classList.add('opened');
 
-        const _this = this;
-
-        document.addEventListener('click', function closeOptionsFromOutside() {
-            const turboClass = require('./turbo');
-            const turbo = new turboClass();
-            let selectedOptionElement = null;
-
-            if (options.classList.contains('opened')) {
-                if (searchable) {
-                    const selectWrapper = options.closest('.turbo-select');
-                    const wrapperId = selectWrapper.getAttribute('id');
-
-                    const label = options.closest('.options-wrapper').querySelector('span.label');
-                    const searchInput = label.querySelector('#options-search');
-                    let optionElements =  options.querySelectorAll('span');
-                    const selectedValue = turbo.getData(selectWrapper, 'selected');
-
-                    if (!selectedValue) {
-                        const defaultOptions = _this.selects[options.closest('.turbo-select').id].options;
-
-                        const founded = _this.selectFilter(searchInput.value.toLowerCase(), defaultOptions, true, wrapperId);
-
-                        if (!turbo.isEmpty(founded)) {
-                            return _this.selectFirstOption(options, true);
-                        } else {
-                            const defaultPlaceholder = turbo.getData(label, 'default');
-
-                            searchInput.value = '';
-                            searchInput.setAttribute('placeholder', defaultPlaceholder);
-
-                            searchInput.closest('.label').classList.remove('selected');
-                        }
-                    }
-
-                    _this.resetOptions(selectWrapper);
-
-                    optionElements = options.querySelectorAll('span');
-
-                    for (let i = 0; i < optionElements.length; i++) {
-                        const option = optionElements[i];
-
-                        if (!turbo.isEmpty(selectedValue) && turbo.getData(option, 'value') === selectedValue) {
-                            selectedOptionElement = option;
-
-                            break;
-                        }
-                    }
-                }
-            }
-
-            _this.closeOptions(options, selectedOptionElement);
-
-            document.removeEventListener('click', closeOptionsFromOutside);
-        });
+        this.bindCloseOptionsFromOutside(options, selectId);
     }
 
-    /**
-     * close options
-     * @param options
-     * @param selectedElement
-     */
-    closeOptions(options, selectedElement = null) {
-        const realSelect = options.closest('.turbo-ui.select').querySelector('select');
-        const searchable = realSelect.classList.contains('searchable');
-        const label = options.closest('.options-wrapper').querySelector('.label');
-        const selectWrapper = options.closest('.turbo-select');
-
-        if (searchable) {
-            this.resetOptions(selectWrapper, selectedElement);
-
-            if (!selectedElement) {
-                selectedElement = this.findSelected(options, true);
-            }
-        }
-
-        if (selectedElement) {
-            const selectedValue = this.turbo.getData(selectedElement, 'value');
-            const selectedText = selectedElement.textContent;
-
-            if (searchable) {
-                const searchInput = label.querySelector('#options-search');
-
-                searchInput.value = selectedText;
-                searchInput.setAttribute('placeholder', selectedText);
-            } else {
-                label.textContent = selectedText;
-            }
-
-            const optionElements = options.querySelectorAll('span');
-
-            for (let i = 0; i < optionElements.length; i++) {
-                const option = optionElements[i];
-
-                option.classList.remove('active');
-            }
-
-            label.classList.add('selected');
-            options.querySelector(`span[data-value="${this.turbo.getData(selectedElement, 'value')}"]`).classList.add('active');
-            realSelect.value = selectedValue;
-            selectWrapper.dataset['selected'] = selectedValue;
-
-            this.triggerChangeEvent(realSelect);
-        }
-
-        this.turbo.toggleAnimationClass(options, 'animation-slide-out-top', 150);
+    closeOptions(options) {
+        options.classList.remove('opened');
+        this.turbo.toggleAnimationClass(options, 'animation-slide-out-top', this.animationSettings.duration);
 
         setTimeout(() => {
             options.style.display = 'none';
-        }, 150);
+        },this.animationSettings.duration);
+    }
 
-        options.classList.remove('opened');
+    bindCloseOptionsFromOutside(options, selectId) {
+        const _this = this;
+
+        document.addEventListener('click', function close() {
+            if (options.classList.contains('opened')) {
+                if (_this.shouldSelectFirstOption(selectId)) {
+                    const firstOptionValue = _this.selects[selectId].options[0].value;
+
+                    if (_this.canSelectOption(firstOptionValue, selectId)) {
+                        _this.selectOption({value: firstOptionValue}, selectId);
+                    }
+                } else {
+                    _this.reselectOption(selectId);
+                    _this.closeOptions(options);
+                }
+            }
+
+            document.removeEventListener('click', close);
+        });
+    }
+
+    shouldSelectFirstOption(selectId) {
+        if (this.selects[selectId].options.length === 1 && !this.areOptionsNotFound(selectId) && this.selects[selectId].selectedOption === null) {
+            return true;
+        }
+    }
+
+    areOptionsNotFound(selectId) {
+        const firstOptionValue = this.selects[selectId].options[0].value;
+        return !!this.getOptionInfoByValue(selectId, firstOptionValue)?.notFoundOption;
+    }
+
+    reselectOption(selectId) {
+        const selectedOption = this.selects[selectId].selectedOption;
+        const selectedValue = selectedOption?.value;
+
+        if (selectedValue) {
+            this.updateSelectedElement(selectId);
+        }
+
+        const selectedElement = selectedOption?.element;
+
+        if ((selectedElement || selectedValue) && this.canSelectOption((selectedElement ?? selectedValue), selectId)) {
+            this.selectOption((selectedElement ?? {value: selectedValue}), selectId, false);
+        }
+    }
+
+    updateSelectedElement(selectId) {
+        const selectedValue = this.selects[selectId].selectedOption?.value;
+
+        if (selectedValue) {
+            this.selects[selectId].selectedOption.element = document.querySelector(`#${selectId} div[data-value="${selectedValue}"]`);
+        }
+    }
+
+    selectOption(option, selectId, triggerChange = true) {
+        const turboSelectWrapper = this.selects[selectId].wrapper;
+        const realSelect = turboSelectWrapper.closest('.turbo-ui.select').querySelector('select');
+        const optionsWrapper = turboSelectWrapper.querySelector('.options');
+        const label = turboSelectWrapper.querySelector('.label');
+        const searchable = this.isSearchable(selectId);
+        const multiselect = this.isMultiselect(selectId);
+
+        if (this.canSelectOption(option, selectId)) {
+            this.closeOptions(optionsWrapper);
+
+            setTimeout(() => {
+                this.unsetSelected(selectId);
+                this.resetSelect(optionsWrapper, label, selectId);
+
+                if (this.turbo.isObject(option) && !this.turbo.isNode(option) && option.value) {
+                    option = optionsWrapper.querySelector(`div[data-value="${option.value}"]`);
+                } else {
+                    option = optionsWrapper.querySelector(`div[data-value="${this.turbo.getData(option, 'value')}"]`);
+                }
+
+                const selectedValue = this.turbo.getData(option, 'value');
+                const selectedText = option.textContent;
+
+                label.classList.add('selected');
+                option.classList.add('active');
+
+                this.selects[selectId].selectedOption = {
+                    value: selectedValue,
+                    text: selectedText,
+                    element: option,
+                };
+
+                if (searchable) {
+                    const searchInput = label.querySelector('#options-search');
+
+                    searchInput.value = selectedText;
+                    searchInput.setAttribute('placeholder', selectedText);
+                } else {
+                    label.textContent = selectedText;
+                }
+
+                realSelect.value = selectedValue;
+
+                if (triggerChange) {
+                    this.triggerChangeEvent(realSelect);
+                }
+            }, this.animationSettings.duration);
+        }
+    }
+
+    unsetSelected(selectId) {
+        this.selects[selectId].selectedOption = null;
+
+        for (const defaultOption of this.selects[selectId].defaultOptions) {
+            const newClasses = [...defaultOption.attributes.class];
+            const activeClassIndex = newClasses.indexOf('active');
+
+            if (activeClassIndex > -1) {
+                newClasses.splice(activeClassIndex, 1);
+            }
+
+            defaultOption.attributes.class = newClasses;
+        }
+    }
+
+    canSelectOption(option, selectId) {
+        let selectedValue = option;
+
+        if (this.turbo.isNode(option)) {
+            selectedValue = this.turbo.getData(option, 'value');
+        }
+
+        const optionInfo = this.getOptionInfoByValue(selectId, selectedValue);
+
+        if (optionInfo?.disabled) {
+            return false;
+        }
+
+        if (optionInfo?.notFoundOption) {
+            return false;
+        }
+
+        return true;
+    }
+
+    getOptionInfoByValue(selectId, value) {
+        if (value === this.selects[selectId].settings.notFoundOptionValue) {
+            return {
+                notFoundOption: true,
+            };
+        }
+
+        const optionInfo = this.selects[selectId].defaultOptions.filter(optionData => {
+            return optionData.value === value;
+        });
+
+        if (optionInfo.length) {
+            return optionInfo[0];
+        }
+    }
+
+    isSelected(selectId, value) {
+        return this.selects[selectId].selectedOption?.value === value;
+    }
+
+    resetSelect(optionsWrapper, label, selectId) {
+        const options = optionsWrapper.querySelectorAll('div');
+        const searchable = this.isSearchable(selectId);
+
+        this.selects[selectId].selectedOption = null;
+
+        label = this.generateLabel(this.selects[selectId].defaultLabel, searchable);
+
+        for (let i = 0; i < options.length; i++) {
+            const option = options[i];
+
+            if (option.classList.contains('active')) {
+                option.classList.remove('active');
+            }
+        }
+
+        this.resetOptions(selectId);
+    }
+
+    resetOptions(selectId) {
+        const turboSelectWrapper = this.selects[selectId].wrapper;
+        const optionsWrapper = turboSelectWrapper.querySelector('.options');
+        const actualOptions = optionsWrapper.querySelectorAll('div');
+        let defaultOptions = this.selects[selectId].defaultOptions;
+
+        defaultOptions = this.activateSelectedOptions(selectId, defaultOptions);
+        const newOptions = this.generateOptions(defaultOptions);
+
+        for (const actualOption of actualOptions) {
+            actualOption.remove();
+        }
+
+        this.showOptionsInWrapper(optionsWrapper, newOptions, false);
+        this.bindSelection(optionsWrapper.querySelectorAll('div'), selectId);
+        this.selects[selectId].options = defaultOptions;
     }
 
     triggerChangeEvent(select) {
@@ -405,196 +514,87 @@ class Select {
         select.dispatchEvent(event);
     }
 
-    /**
-     * reset options to default
-     * @param selectWrapper
-     * @param selectedElement
-     */
-    resetOptions(selectWrapper, selectedElement = null) {
-        const optionsWrapper = selectWrapper.querySelector('.options');
-        const options = optionsWrapper.querySelectorAll('span');
-        const selectWrapperId = selectWrapper.getAttribute('id');
-
-        for (let i = 0; i < options.length; i++) {
-            options[i].remove();
-        }
-
-        const defaultOptions = this.selects[selectWrapperId].options;
-
-        this.showFilteredOptions(optionsWrapper, defaultOptions, selectedElement, false);
-    }
-
-    /**
-     * find selected option
-     * @param options
-     * @param getElement
-     * @return {string|null|*}
-     */
-    findSelected(options, getElement = false) {
-        options = options.querySelectorAll('span');
-
-        for (let i = 0; i < options.length; i++) {
-            const option = options[i];
-
-            if (option.classList.contains('active')) {
-                if (getElement) {
-                    return option;
-                }
-
-                return this.turbo.getData(option, 'value');
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * filter options, available with .searchable class only
-     * @param searchInput
-     * @param originValue
-     * @param selectedValue
-     */
-    filterOptions(searchInput, originValue, selectedValue = null) {
-        const selectId = searchInput.closest('.turbo-select').id;
-        const optionsElement = searchInput.closest('.options-wrapper').querySelector('.options');
-        const defaultOptions = this.selects[selectId].options;
-
-        if (originValue === '') {
-            this.showFilteredOptions(optionsElement, defaultOptions, selectedValue);
-        }
+    bindFiltering(searchInput, selectId) {
+        const options = searchInput.closest('.options-wrapper').querySelector('.options');
 
         searchInput.addEventListener('input', () => {
-            let searchFor = searchInput.value.toLowerCase();
-            let filteredOptions = this.selectFilter(searchFor, defaultOptions, false, selectId);
+            const searchFor = searchInput.value.toLowerCase();
+            const filtered = this.filterOptions(searchFor, selectId);
 
-            if (searchFor !== '') {
-                searchInput.closest('.label').classList.add('selected');
-            } else {
-                searchInput.closest('.label').classList.remove('selected');
-            }
-
-            this.showFilteredOptions(optionsElement, filteredOptions, selectedValue);
+            this.replaceOptions(options, filtered, selectId);
         });
     }
 
-    /**
-     * filter options
-     * @param searchFor
-     * @param options
-     * @param realFilter means empty searchFor returns empty array
-     * @param wrapperId
-     * @return {*[]}
-     */
-    selectFilter(searchFor, options, realFilter = false, wrapperId = '') {
+    filterOptions(searchFor, selectId) {
+        const options = this.selects[selectId].defaultOptions;
         let filtered = [];
+        const usedValues = [];
 
-        if (realFilter && searchFor === '') {
-            return filtered;
+        if (searchFor === '') {
+            return options;
         }
 
-        for (let i = 0; i < options.length; i++) {
-            const optionValue = options[i].value;
-            const optionText = options[i].text;
-            const searchableText = optionText.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+        for (const option of options) {
+            const optionValue = option.value;
+            const optionText = option.text;
             const searchableValue = optionValue.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+            const searchableText = optionText.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
 
-            const optionData = {
-                value: optionValue,
-                text: optionText,
-                attributes: options[i].attributes,
-            };
-            
             if (searchableText.indexOf(searchFor) > -1) {
-                filtered[i] = optionData;
+                filtered.push(option);
+                usedValues.push(optionValue);
             }
 
-            if (this.selects[wrapperId].settings.searchAlsoValue && searchableValue.indexOf(searchFor) > -1 && this.turbo.isEmpty(filtered[i])) {
-                filtered[i] = optionData;
+            if (this.selects[selectId].settings.searchAlsoValue && !usedValues.includes(optionValue) && searchableValue.indexOf(searchFor) > -1) {
+                filtered.push(option);
             }
         }
 
-        return filtered.filter(item => item !== undefined);
+        return filtered;
     }
 
-    /**
-     * @param optionsElement
-     * @param options
-     * @param selectedValue
-     * @param show
-     */
-    showFilteredOptions(optionsElement, options, selectedValue = null, show = true) {
-        const optionElements = optionsElement.querySelectorAll('span');
-        const selectWrapper = optionsElement.closest('.turbo-select');
-        const wrapperId = selectWrapper.getAttribute('id');
+    replaceOptions(options, arrayOfNewOptions, selectId) {
+        // we must have correct classes
+        arrayOfNewOptions = this.activateSelectedOptions(selectId, arrayOfNewOptions);
 
-        for (let i = 0; i < optionElements.length; i++) {
-            optionElements[i].remove();
+        let newOptions = this.generateOptions(arrayOfNewOptions);
+        const optionsWrapper = this.selects[selectId].wrapper.querySelector('.options');
+
+        for (const option of options.querySelectorAll('div')) {
+            option.remove();
         }
 
-        if (this.turbo.isEmpty(options)) {
-            const option = this.turbo.createElement('span', this.turbo.settings.text.notFound, {
-                dataset: {
-                    value: this.selects[wrapperId].settings.notFoundOptionValue,
-                },
-            });
-
-            this.turbo.showElement(option, optionsElement, 'append', 'block', {});
-        } else {
-            for (let i = 0; i < options.length; i++) {
-                const option = options[i];
-                const disabledOption = option.attributes?.class.includes('disabled');
-                let disabled = false;
-
-                if (disabledOption) {
-
-                    if (this.selects[wrapperId].settings.hideDisabledOptions) {
-                        continue;
-                    }
-
-                    disabled = true;
-                }
-
-                const optionAttributes = {
-                    dataset: {
-                        value: option.value,
-                    },
-                };
-
-                if (disabled) {
-                    optionAttributes.class = ['disabled'];
-                }
-
-                if (selectedValue && option.value === selectedValue) {
-                    optionAttributes.class = ['active'];
-                }
-
-                const optionElement = this.turbo.createElement('span', this.turbo.capitalizeFirstLetter(option.text), optionAttributes);
-
-                this.turbo.showElement(optionElement, optionsElement, 'append', (show ? 'block' : 'none'), {});
-            }
+        if (this.turbo.isEmpty(arrayOfNewOptions)) {
+            arrayOfNewOptions = [this.generateNotFoundOptionInfo(selectId)];
+            newOptions = this.generateOptions(arrayOfNewOptions);
         }
+
+        this.selects[selectId].options = arrayOfNewOptions;
+        this.showOptionsInWrapper(optionsWrapper, newOptions);
+
+        const optionsElements = this.selects[selectId].wrapper.querySelectorAll('.options div');
+        this.bindSelection(optionsElements, selectId);
     }
 
-    /**
-     * select first option from current options
-     * @param optionsElement
-     * @param searchable
-     */
-    selectFirstOption(optionsElement, searchable) {
-        const options = optionsElement.querySelectorAll('span');
-        let firstOption = null;
+    activateSelectedOptions(selectId, options) {
+        for (const option of options) {
+            if (this.isSelected(selectId, option.value)) {
+                const newClasses = [...option.attributes.class];
+                const activeClassIndex = newClasses.indexOf('active');
 
-        for (let i = 0; i < options.length; i++) {
-            if (!options[i].classList.contains('disabled')) {
-                firstOption = options[i];
-                break;
+                if (activeClassIndex > -1) {
+                    newClasses.splice(activeClassIndex, 1);
+                }
+
+                newClasses.push('active');
+
+                option.attributes.class = newClasses;
             }
         }
 
-        if (searchable && firstOption) {
-            this.closeOptions(optionsElement, firstOption);
-        }
+        return options;
     }
+
 }
 
 module.exports = Select;

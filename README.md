@@ -222,7 +222,6 @@ init custom selects
 - hide original select element and show custom
 - original select element must be in wrapper with classes .turbo-ui.select
 - if original select has .searchable class, custom select will be searchable
-- additional rendered select element should be initiated with reloadDefaults parameter set to true
 
 ```js
 // default selector is document
