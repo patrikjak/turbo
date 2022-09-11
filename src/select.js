@@ -10,7 +10,7 @@ class Select {
             open: 'animation-slide-in-top',
             close: 'animation-slide-out-top',
             duration: 150,
-        }
+        };
     }
 
     initSelects() {
@@ -42,7 +42,7 @@ class Select {
             searchable: searchable,
             multiselect: multiselect,
         }
-        const mainElements = this.generateMainElements(turboSelectId, selectOptions, realLabel.textContent);
+        const mainElements = this.generateMainElements(turboSelectId, selectOptions, realLabel.textContent, multiselect);
         const defaultOptions = this.getOptionsInfo(options, customSettings);
         const generatedOptions = this.generateOptions(defaultOptions);
 
@@ -59,9 +59,15 @@ class Select {
         this.createInstance(defaultOptions, turboSelectId, (mainElements.label ? realLabel.textContent : null), searchable, multiselect);
     }
 
-    generateMainElements(turboSelectId, selectOptions, labelText) {
+    generateMainElements(turboSelectId, selectOptions, labelText, multiselect = false) {
+        const turboSelectClasses = ['turbo-select'];
+
+        if (multiselect) {
+            turboSelectClasses.push('multiselect');
+        }
+
         const turboSelectElement = this.turbo.createElement('div', null, {
-            class: ['turbo-select'],
+            class: turboSelectClasses,
             id: turboSelectId,
         });
 
@@ -115,24 +121,68 @@ class Select {
             this.turbo.showElement(searchInput, label, 'append', 'block', {});
         }
 
-        return label
+        return label;
     }
 
-    generateNotFoundOptionInfo(selectId) {
-        const value = this.selects[selectId].settings.notFoundOptionValue;
+    generateAdditionalOption(selectId, additionalOption = 'notFound') {
+        if (['notFound', 'allSelected'].includes(additionalOption)) {
+            const value = additionalOption === 'notFound' ? this.selects[selectId].settings.notFoundOptionValue : this.selects[selectId].settings.allOptionsSelectedOptionValue;
+            const text = additionalOption === 'notFound' ? this.turbo.settings.text.notFound : this.turbo.settings.text.allSelected;
+            const classes = ['disabled'];
 
-        return {
-            text: this.turbo.settings.text.notFound,
-            value: value,
-            attributes: {
-                dataset: {
-                    value: value,
+            if (additionalOption === 'notFound') {
+                classes.push('not-found-option');
+            } else {
+                classes.push('all-selected-option');
+            }
+
+            return {
+                text: text,
+                value: value,
+                attributes: {
+                    dataset: {
+                        value: value,
+                    },
+                    class: classes,
                 },
-                class: ['disabled', 'not-found-option'],
-            },
-            disabled: true,
-            notFoundOption: true,
-        };
+                disabled: true,
+                notFoundOption: additionalOption === 'notFound',
+                allSelectedOption: additionalOption === 'allSelected',
+            };
+        }
+
+        return {};
+    }
+
+    generateSelectedOption(text, value, nextRow = false) {
+        const optionClasses = [
+            'selected-option',
+        ];
+
+        if (nextRow) {
+            optionClasses.push('next-row');
+        }
+
+        const selectedOption = this.turbo.createElement('div', text, {
+            class: optionClasses,
+            dataset: {
+                value: value,
+            }
+        });
+
+        const removeButton = this.turbo.createElement('div', null, {
+            class: ['remove-button'],
+        });
+
+        for (let i = 0; i < 2; i++) {
+            this.turbo.showElement(this.turbo.createElement('div', null, {
+                class: ['remove-line'],
+            }), removeButton, 'append', 'block', {});
+        }
+
+        this.turbo.showElement(removeButton, selectedOption, 'append', 'block', {});
+
+        return selectedOption;
     }
 
     getOptionsInfo(arrayOfRealOptions, customSelectSettings) {
@@ -210,15 +260,21 @@ class Select {
             defaultOptions: options,
             options: options,
             settings: {
-                searchAlsoValue: wrapperId && this.custom[wrapperId]?.settings?.searchAlsoValue ? this.custom[wrapperId]?.settings?.searchAlsoValue : this.turbo.settings.select.searchAlsoValue,
-                notFoundOptionValue: wrapperId && this.custom[wrapperId]?.settings?.notFoundOptionValue ? this.custom[wrapperId]?.settings?.notFoundOptionValue : this.turbo.settings.select.notFoundOptionValue,
-                hideDisabledOptions: wrapperId && this.custom[wrapperId]?.settings?.hideDisabledOptions ? this.custom[wrapperId]?.settings?.hideDisabledOptions : this.turbo.settings.select.hideDisabledOptions,
+                searchAlsoValue: wrapperId && typeof this.custom[wrapperId]?.settings?.searchAlsoValue !== 'undefined' ? this.custom[wrapperId].settings.searchAlsoValue : this.turbo.settings.select.searchAlsoValue,
+                notFoundOptionValue: wrapperId && typeof this.custom[wrapperId]?.settings?.notFoundOptionValue !== 'undefined' ? this.custom[wrapperId].settings.notFoundOptionValue : this.turbo.settings.select.notFoundOptionValue,
+                allOptionsSelectedOptionValue: wrapperId && typeof this.custom[wrapperId]?.settings?.allOptionsSelectedOptionValue !== 'undefined' ? this.custom[wrapperId].settings.allOptionsSelectedOptionValue : this.turbo.settings.select.allOptionsSelectedOptionValue,
+                hideDisabledOptions: wrapperId && typeof this.custom[wrapperId]?.settings?.hideDisabledOptions !== 'undefined' ? this.custom[wrapperId].settings.hideDisabledOptions : this.turbo.settings.select.hideDisabledOptions,
             },
             defaultLabel: defaultLabel,
-            selectedOption: null,
+            selectedOption: (multiselect ? [] : null),
             searchable: searchable,
             multiselect: multiselect,
         };
+
+        if (multiselect) {
+            this.selects[id].settings.multiselect = {};
+            this.selects[id].settings.multiselect.hideSelected = wrapperId && typeof this.custom[wrapperId]?.settings?.multiselect?.hideSelected !== 'undefined' ? this.custom[wrapperId].settings.multiselect.hideSelected : this.turbo.settings.select.multiselect.hideSelected
+        }
     }
 
     isSearchable(selectId) {
@@ -267,6 +323,16 @@ class Select {
                 this.selectOption(option, selectId);
             });
         }
+    }
+
+    bindOptionDelete(option, selectId) {
+        const deleteButton = option.querySelector('.remove-button');
+
+        deleteButton.addEventListener('click', e => {
+            e.stopPropagation();
+
+            this.removeOption(option, selectId);
+        });
     }
 
     toggleOptions(turboSelectWrapper, selectId) {
@@ -378,8 +444,10 @@ class Select {
             this.closeOptions(optionsWrapper);
 
             setTimeout(() => {
-                this.unsetSelected(selectId);
-                this.resetSelect(optionsWrapper, label, selectId);
+                if (!multiselect) {
+                    this.unsetSelected(selectId);
+                    this.resetSelect(optionsWrapper, label, selectId);
+                }
 
                 if (this.turbo.isObject(option) && !this.turbo.isNode(option) && option.value) {
                     option = optionsWrapper.querySelector(`div[data-value="${option.value}"]`);
@@ -393,22 +461,39 @@ class Select {
                 label.classList.add('selected');
                 option.classList.add('active');
 
-                this.selects[selectId].selectedOption = {
+                const selectedInfo = {
                     value: selectedValue,
                     text: selectedText,
                     element: option,
                 };
+
+                if (multiselect) {
+                    this.selects[selectId].selectedOption.push(selectedInfo);
+                } else {
+                    this.selects[selectId].selectedOption = selectedInfo;
+                }
 
                 if (searchable) {
                     const searchInput = label.querySelector('#options-search');
 
                     searchInput.value = selectedText;
                     searchInput.setAttribute('placeholder', selectedText);
+                } else if (multiselect) {
+                    this.showSelectedOptions(selectId);
+                    this.hideSelectedOption(selectId, option);
+
+                    if (this.selects[selectId].options.length === 0 || this.selects[selectId].options === null) {
+                        this.addAllSelectedOption(selectId);
+                    }
                 } else {
                     label.textContent = selectedText;
                 }
 
-                realSelect.value = selectedValue;
+                if (multiselect) {
+                    realSelect.value = selectedValue;
+                } else {
+                    this.selectRealOption(selectId, selectedValue);
+                }
 
                 if (triggerChange) {
                     this.triggerChangeEvent(realSelect);
@@ -417,8 +502,242 @@ class Select {
         }
     }
 
+    selectRealOption(selectId, value) {
+        const turboSelectWrapper = this.selects[selectId].wrapper.closest('.turbo-ui.select');
+        const realSelect = turboSelectWrapper.querySelector('select');
+
+        realSelect.querySelector(`option[value="${value}"]`).selected = true;
+    }
+
+    /**
+     * for multiselect
+     * @param option
+     * @param selectId
+     */
+    removeOption(option, selectId) {
+        const optionValue = this.turbo.getData(option, 'value');
+        option.remove();
+
+        this.makeOptionAvailable(optionValue, selectId);
+        this.showSelectedOptions(selectId);
+
+        if (this.turbo.isEmpty(this.selects[selectId].selectedOption)) {
+            const turboSelectWrapper = this.selects[selectId].wrapper;
+            const newLabel = this.generateLabel(this.selects[selectId].defaultLabel, this.isSearchable(selectId));
+
+            turboSelectWrapper.querySelector('.label').remove();
+            this.turbo.showElement(newLabel, turboSelectWrapper.querySelector('.options-wrapper'), 'prepend', 'block', {});
+        }
+
+        this.deleteAllSelectedOption(selectId);
+    }
+
+    deleteAllSelectedOption(selectId) {
+        const options = this.selects[selectId].options;
+        let allSelectedOptionIndex = false;
+
+        for (let i = 0; i < options.length; i++) {
+            const option = options[i];
+
+            if (option.value === this.selects[selectId].settings.allOptionsSelectedOptionValue) {
+                allSelectedOptionIndex = i;
+            }
+        }
+
+        if (allSelectedOptionIndex !== false) {
+            this.selects[selectId].options.splice(allSelectedOptionIndex, 1);
+        }
+
+        this.deleteAllSelectedOptionElement(selectId);
+    }
+
+    deleteAllSelectedOptionElement(selectId) {
+        for (const optionElement of this.selects[selectId].wrapper.querySelectorAll('.options div')) {
+            if (this.turbo.getData(optionElement, 'value') === this.selects[selectId].settings.allOptionsSelectedOptionValue) {
+                optionElement.remove();
+            }
+        }
+    }
+
+    /**
+     * for multiselect
+     * @param selectedOptionValue
+     * @param selectId
+     */
+    makeOptionAvailable(selectedOptionValue, selectId) {
+        const selectedOptionDefaultIndex = this.getDefaultOptionIndex(selectedOptionValue, selectId);
+        const optionData = this.getOptionInfoByValue(selectId, selectedOptionValue);
+
+        for (let i = 0; i < this.selects[selectId].selectedOption.length; i++) {
+            const option = this.selects[selectId].selectedOption[i];
+
+            if (option.value === selectedOptionValue) {
+                if (this.selects[selectId].settings.multiselect.hideSelected) {
+                    this.selects[selectId].options.splice(selectedOptionDefaultIndex, 0, optionData);
+                } else {
+                    this.cancelDisability(selectId, selectedOptionValue);
+                }
+
+                this.selects[selectId].selectedOption.splice(i, 1);
+            }
+        }
+
+        if (!this.selects[selectId].settings.multiselect.hideSelected) {
+            this.selects[selectId].options = [...this.activateSelectedOptions(selectId, this.selects[selectId].defaultOptions)];
+        }
+
+        this.resetOptions(selectId, this.selects[selectId].options);
+    }
+
+    /**
+     * for current options
+     * @param selectId
+     * @param option
+     */
+    cancelDisability(selectId, option) {
+        for (const optionData of this.selects[selectId].options) {
+            if (optionData.value === option) {
+                let disableClassIndex = optionData.attributes.class.indexOf('disabled');
+                optionData.disabled = false;
+
+                if (disableClassIndex > -1) {
+                    optionData.attributes.class.splice(disableClassIndex, 1);
+                }
+            }
+        }
+    }
+    getDefaultOptionIndex(option, selectId) {
+        for (let i = 0; i < this.selects[selectId].defaultOptions.length; i++) {
+            if (option === this.selects[selectId].defaultOptions[i].value) {
+                return i;
+            }
+        }
+
+        return 0;
+    }
+
+    resetAvailableOptions(selectId) {
+        const turboSelectWrapper = this.selects[selectId].wrapper;
+        const optionsWrapper = turboSelectWrapper.querySelector('.options');
+
+        for (const option of optionsWrapper.querySelectorAll('div')) {
+            option.remove();
+        }
+
+        const newOptions = this.generateOptions(this.selects[selectId].options);
+        this.showOptionsInWrapper(optionsWrapper, newOptions);
+        this.bindSelection(optionsWrapper.querySelectorAll('div'), selectId);
+    }
+
+    /**
+     * just for multiselect
+     * @param selectId
+     */
+    showSelectedOptions(selectId) {
+        const turboSelectWrapper = this.selects[selectId].wrapper;
+        const selectedOptions = this.selects[selectId].selectedOption;
+        let label = turboSelectWrapper.querySelector('.label');
+
+        const optionsWrapper = turboSelectWrapper.querySelector('.options-wrapper');
+        const usableWidth = this.getUsableOptionWrapperWidth(optionsWrapper);
+        let optionsWidthSum = 0;
+
+        label.textContent = '';
+
+        for (const selectedOption of selectedOptions) {
+            const selectedOptionElement = this.generateSelectedOption(selectedOption.text, selectedOption.value);
+            this.turbo.showElement(selectedOptionElement, label, 'append', 'inline-flex', {});
+
+            optionsWidthSum += this.getElementUsedWidth(selectedOptionElement);
+
+            if (this.mustBePlacedBelowFirstRow(usableWidth, optionsWidthSum)) {
+                selectedOptionElement.classList.add('next-row');
+            }
+
+            this.bindOptionDelete(selectedOptionElement, selectId);
+        }
+    }
+
+    getUsableOptionWrapperWidth(wrapper) {
+        const wrapperWidth = parseFloat(this.turbo.getCss(wrapper, 'width'));
+        const wrapperPaddings = parseFloat(this.turbo.getCss(wrapper, 'padding-right')) + parseFloat(this.turbo.getCss(wrapper, 'padding-left'));
+        const beautySpace = 10;
+
+        return wrapperWidth - (wrapperPaddings - beautySpace);
+    }
+
+    getElementUsedWidth(element) {
+        const elementWidth = parseFloat(this.turbo.getCss(element, 'width'));
+        const elementMargins = parseFloat(this.turbo.getCss(element, 'margin-right')) + parseFloat(this.turbo.getCss(element, 'margin-left'));
+
+        return elementWidth + elementMargins;
+    }
+
+    mustBePlacedBelowFirstRow(wrapperUsableWidth, optionsSum) {
+        return wrapperUsableWidth < optionsSum;
+    }
+
+    hideSelectedOption(selectId, option) {
+        const optionValue = this.turbo.getData(option, 'value');
+
+        if (this.selects[selectId].settings.multiselect.hideSelected) {
+            option.remove();
+
+            for (const selectedOption of this.selects[selectId].selectedOption) {
+                if (selectedOption.value === optionValue) {
+                    selectedOption.element = null;
+                    break;
+                }
+            }
+
+            let selectedOptionIndex = null;
+
+            for (let i = 0; i < this.selects[selectId].options.length; i++) {
+                const option = this.selects[selectId].options[i];
+
+                if (option.value === optionValue) {
+                    selectedOptionIndex = i;
+                }
+            }
+
+            if (selectedOptionIndex !== null) {
+                this.selects[selectId].options = [...this.selects[selectId].options];
+                this.selects[selectId].options.splice(selectedOptionIndex, 1);
+            }
+        } else {
+            this.makeOptionDisabled(selectId, option);
+        }
+    }
+
+    makeOptionDisabled(selectId, option) {
+        const optionValue = this.turbo.getData(option, 'value');
+        option.classList.add('disabled');
+
+        for (const optionData of this.selects[selectId].options) {
+            if (optionValue === optionData.value) {
+                optionData.disabled = true;
+                optionData.attributes.class.push('disabled');
+            }
+        }
+    }
+
+    addAllSelectedOption(selectId) {
+        const option = this.generateAdditionalOption(selectId, 'allSelected');
+        const optionElement = this.generateOptions([option]);
+        const turboSelectWrapper = this.selects[selectId].wrapper;
+        const optionsWrapper = turboSelectWrapper.querySelector('.options');
+
+        this.showOptionsInWrapper(optionsWrapper, optionElement);
+        this.bindSelection(optionsWrapper.querySelectorAll('div'), selectId);
+        this.selects[selectId].options.push(option);
+    }
+
     unsetSelected(selectId) {
-        this.selects[selectId].selectedOption = null;
+        const multiselect = this.isMultiselect(selectId);
+
+        if (!multiselect) {
+            this.selects[selectId].selectedOption = null;
+        }
 
         for (const defaultOption of this.selects[selectId].defaultOptions) {
             const newClasses = [...defaultOption.attributes.class];
@@ -449,6 +768,16 @@ class Select {
             return false;
         }
 
+        if (this.isMultiselect(selectId)) {
+            const selectedOptions = this.selects[selectId].selectedOption;
+
+            for (const selectedOption of selectedOptions) {
+                if (optionInfo.value === selectedOption.value) {
+                    return false
+                }
+            }
+        }
+
         return true;
     }
 
@@ -469,14 +798,25 @@ class Select {
     }
 
     isSelected(selectId, value) {
+        if (this.isMultiselect(selectId)) {
+            for (const selectedOption of this.selects[selectId].selectedOption) {
+                if (selectedOption.value === value) {
+                    return true;
+                }
+            }
+        }
+
         return this.selects[selectId].selectedOption?.value === value;
     }
 
     resetSelect(optionsWrapper, label, selectId) {
         const options = optionsWrapper.querySelectorAll('div');
         const searchable = this.isSearchable(selectId);
+        const multiselect = this.isMultiselect(selectId);
 
-        this.selects[selectId].selectedOption = null;
+        if (!multiselect) {
+            this.selects[selectId].selectedOption = null;
+        }
 
         label = this.generateLabel(this.selects[selectId].defaultLabel, searchable);
 
@@ -491,14 +831,22 @@ class Select {
         this.resetOptions(selectId);
     }
 
-    resetOptions(selectId) {
+    resetOptions(selectId, options = {}) {
         const turboSelectWrapper = this.selects[selectId].wrapper;
         const optionsWrapper = turboSelectWrapper.querySelector('.options');
         const actualOptions = optionsWrapper.querySelectorAll('div');
-        let defaultOptions = this.selects[selectId].defaultOptions;
+        let newOptions, newOptionsData;
 
-        defaultOptions = this.activateSelectedOptions(selectId, defaultOptions);
-        const newOptions = this.generateOptions(defaultOptions);
+        if (this.turbo.isEmpty(options)) {
+            let defaultOptions = this.selects[selectId].defaultOptions;
+
+            newOptionsData = [...defaultOptions];
+            defaultOptions = this.activateSelectedOptions(selectId, defaultOptions);
+            newOptions = this.generateOptions(defaultOptions);
+        } else {
+            newOptions = this.generateOptions(options);
+            newOptionsData = [...options];
+        }
 
         for (const actualOption of actualOptions) {
             actualOption.remove();
@@ -506,7 +854,7 @@ class Select {
 
         this.showOptionsInWrapper(optionsWrapper, newOptions, false);
         this.bindSelection(optionsWrapper.querySelectorAll('div'), selectId);
-        this.selects[selectId].options = defaultOptions;
+        this.selects[selectId].options = [...newOptionsData];
     }
 
     triggerChangeEvent(select) {
@@ -565,7 +913,7 @@ class Select {
         }
 
         if (this.turbo.isEmpty(arrayOfNewOptions)) {
-            arrayOfNewOptions = [this.generateNotFoundOptionInfo(selectId)];
+            arrayOfNewOptions = [this.generateAdditionalOption(selectId)];
             newOptions = this.generateOptions(arrayOfNewOptions);
         }
 
@@ -578,18 +926,18 @@ class Select {
 
     activateSelectedOptions(selectId, options) {
         for (const option of options) {
-            if (this.isSelected(selectId, option.value)) {
-                const newClasses = [...option.attributes.class];
-                const activeClassIndex = newClasses.indexOf('active');
+            const newClasses = [...option.attributes.class];
+            const activeClassIndex = newClasses.indexOf('active');
 
-                if (activeClassIndex > -1) {
-                    newClasses.splice(activeClassIndex, 1);
-                }
-
-                newClasses.push('active');
-
-                option.attributes.class = newClasses;
+            if (activeClassIndex > -1) {
+                newClasses.splice(activeClassIndex, 1);
             }
+
+            if (this.isSelected(selectId, option.value)) {
+                newClasses.push('active');
+            }
+
+            option.attributes.class = newClasses;
         }
 
         return options;

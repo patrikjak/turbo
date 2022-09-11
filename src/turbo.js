@@ -19,7 +19,7 @@ class Turbo {
             animation: {
                 duration: 300,
                 showClass: 'animation-slide-in-fwd-center',
-                hideClass: 'animation-slide-out-bck-center'
+                hideClass: 'animation-slide-out-bck-center',
             },
             text: {
                 save: 'Save',
@@ -27,6 +27,7 @@ class Turbo {
                 confirm: 'Confirm',
                 info: 'Info',
                 notFound: 'No results found',
+                allSelected: 'All options have been selected',
             },
             notification: {
                 autoHide: true,
@@ -36,7 +37,11 @@ class Turbo {
             select: {
                 searchAlsoValue: false,
                 notFoundOptionValue: '-',
+                allOptionsSelectedOptionValue: '-',
                 hideDisabledOptions: false,
+                multiselect: {
+                    hideSelected: true,
+                }
             }
         };
     }
