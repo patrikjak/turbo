@@ -11,6 +11,7 @@ class Select {
             close: 'animation-slide-out-top',
             duration: 150,
         };
+        this.beautySpace = 10; // multiselect options || input
     }
 
     initSelects() {
@@ -25,10 +26,6 @@ class Select {
                     const turboSelectId = `turbo-select-${i + 1}`;
                     this.generateTurboSelect(turboSelectWrapper, turboSelectId);
                     this.bindSelectActions(turboSelectWrapper);
-
-                    if (this.isMultiselect(turboSelectId) && this.selects[turboSelectId].settings.multiselect.autoSelectFirstOption) {
-                        this.autoSelectFirstOption(turboSelectId);
-                    }
                 }
             }
         }
@@ -46,7 +43,7 @@ class Select {
             searchable: searchable,
             multiselect: multiselect,
         }
-        const mainElements = this.generateMainElements(turboSelectId, selectOptions, realLabel.textContent, multiselect);
+        const mainElements = this.generateMainElements(turboSelectId, selectOptions, realLabel.textContent, multiselect, searchable);
         const defaultOptions = this.getOptionsInfo(options, customSettings);
         const generatedOptions = this.generateOptions(defaultOptions);
 
@@ -63,11 +60,15 @@ class Select {
         this.createInstance(defaultOptions, turboSelectId, (mainElements.label ? realLabel.textContent : null), searchable, multiselect);
     }
 
-    generateMainElements(turboSelectId, selectOptions, labelText, multiselect = false) {
+    generateMainElements(turboSelectId, selectOptions, labelText, multiselect = false, searchable = false) {
         const turboSelectClasses = ['turbo-select'];
 
         if (multiselect) {
             turboSelectClasses.push('multiselect');
+        }
+
+        if (searchable) {
+            turboSelectClasses.push('searchable');
         }
 
         const turboSelectElement = this.turbo.createElement('div', null, {
@@ -104,7 +105,7 @@ class Select {
         };
     }
 
-    generateLabel(labelText, searchable) {
+    generateLabel(labelText, searchable, onlyInput = false) {
         const labelClasses = ['label'];
 
         if (searchable) {
@@ -117,10 +118,14 @@ class Select {
 
         if (searchable) {
             const searchInput = this.turbo.createElement('input', null, {
-                placeholder: labelText,
-                id: 'options-search',
+                placeholder: labelText ? labelText : '',
+                class: ['options-search'],
                 autocomplete: 'off'
             });
+
+            if (onlyInput) {
+                return searchInput;
+            }
 
             this.turbo.showElement(searchInput, label, 'append', 'block', {});
         }
@@ -276,10 +281,15 @@ class Select {
         };
 
         if (multiselect) {
+            const hideSelectedOptions = wrapperId && typeof this.custom[wrapperId]?.settings?.multiselect?.hideSelected !== 'undefined';
+
             this.selects[id].settings.multiselect = {};
-            this.selects[id].settings.multiselect.hideSelected = wrapperId && typeof this.custom[wrapperId]?.settings?.multiselect?.hideSelected !== 'undefined' ? this.custom[wrapperId].settings.multiselect.hideSelected : this.turbo.settings.select.multiselect.hideSelected;
+            this.selects[id].settings.multiselect.hideSelected = hideSelectedOptions ? this.custom[wrapperId].settings.multiselect.hideSelected : this.turbo.settings.select.multiselect.hideSelected;
             this.selects[id].settings.multiselect.hideOptionsAfterSelect = wrapperId && typeof this.custom[wrapperId]?.settings?.multiselect?.hideOptionsAfterSelect !== 'undefined' ? this.custom[wrapperId].settings.multiselect.hideOptionsAfterSelect : this.turbo.settings.select.multiselect.hideOptionsAfterSelect;
-            this.selects[id].settings.multiselect.autoSelectFirstOption = wrapperId && typeof this.custom[wrapperId]?.settings?.multiselect?.autoSelectFirstOption !== 'undefined' ? this.custom[wrapperId].settings.multiselect.autoSelectFirstOption : this.turbo.settings.select.multiselect.autoSelectFirstOption;
+
+            if (hideSelectedOptions) {
+                this.selects[id].settings.hideDisabledOptions = true;
+            }
         }
     }
 
@@ -300,6 +310,11 @@ class Select {
             const dropdownArrow = turboSelectWrapper.querySelector('.turbo-select .dropdown-arrow');
             const selectId = selectWrapper.id;
 
+            if (this.isSearchable(selectId)) {
+                const searchInput = optionsWrapper.querySelector('.options-search');
+                this.bindFiltering(searchInput, selectId);
+            }
+
             optionsWrapper.addEventListener('click', e => {
                 e.stopPropagation();
                 this.toggleOptions(turboSelectWrapper, selectId);
@@ -311,12 +326,6 @@ class Select {
             });
 
             this.bindSelection(options, selectId);
-
-            if (this.isSearchable(selectId)) {
-                const searchInput = optionsWrapper.querySelector('#options-search');
-
-                this.bindFiltering(searchInput, selectId);
-            }
         }
     }
 
@@ -351,6 +360,10 @@ class Select {
 
         if (open) {
             this.openOptions(options, selectId);
+
+            if (this.isSearchable(selectId)) {
+                turboSelectWrapper.querySelector('.options-search').focus();
+            }
         } else {
             this.reselectOption(selectId);
             this.closeOptions(options);
@@ -363,7 +376,7 @@ class Select {
 
         if (searchable) {
             const label = options.closest('.options-wrapper').querySelector('.label');
-            const searchInput = label.querySelector('#options-search');
+            const searchInput = label.querySelector('.options-search');
             const actualValue = searchInput.value;
 
             if (!this.turbo.isEmpty(actualValue)) {
@@ -400,7 +413,7 @@ class Select {
 
         setTimeout(() => {
             options.style.display = 'none';
-        },this.animationSettings.duration);
+        }, this.animationSettings.duration);
     }
 
     bindCloseOptionsFromOutside(options, selectId) {
@@ -417,6 +430,14 @@ class Select {
                 } else {
                     _this.reselectOption(selectId);
                     _this.closeOptions(options);
+                }
+
+                if (_this.isMultiselect(selectId) && _this.isSearchable(selectId)) {
+                    options.closest('.options-wrapper').querySelector('.options-search').value = '';
+
+                    setTimeout(() => {
+                        _this.resetOptions(selectId, _this.selectableOptions(selectId));
+                    }, _this.animationSettings.duration);
                 }
             }
 
@@ -501,8 +522,8 @@ class Select {
                     this.selects[selectId].selectedOption = selectedInfo;
                 }
 
-                if (searchable) {
-                    const searchInput = label.querySelector('#options-search');
+                if (searchable && !multiselect) {
+                    const searchInput = label.querySelector('.options-search');
 
                     searchInput.value = selectedText;
                     searchInput.setAttribute('placeholder', selectedText);
@@ -527,19 +548,6 @@ class Select {
                     this.triggerChangeEvent(realSelect);
                 }
             }, this.animationSettings.duration);
-        }
-    }
-
-    autoSelectFirstOption(selectId, index = 0) {
-        const turboSelectWrapper = this.selects[selectId].wrapper;
-        const realSelect = turboSelectWrapper.closest('.turbo-ui.select').querySelector('select');
-
-        if (index < realSelect.options.length) {
-            if (this.canSelectOption(realSelect.options[index], selectId)) {
-                this.selectRealOption(selectId, realSelect.options[index].value);
-            } else {
-                this.autoSelectFirstOption(selectId, index + 1);
-            }
         }
     }
 
@@ -715,15 +723,22 @@ class Select {
             this.bindOptionDelete(selectedOptionElement, selectId);
         }
 
+        if (this.isSearchable(selectId)) {
+            const searchInput = this.generateLabel(null, true, true);
+            this.turbo.showElement(searchInput, label, 'append', 'inline-flex', {});
+            this.bindFiltering(searchInput, selectId);
+
+            searchInput.focus();
+        }
+
         this.setOptionWrapperPosition(selectId);
     }
 
     getUsableOptionWrapperWidth(wrapper) {
         const wrapperWidth = parseFloat(this.turbo.getCss(wrapper, 'width'));
         const wrapperPaddings = parseFloat(this.turbo.getCss(wrapper, 'padding-right')) + parseFloat(this.turbo.getCss(wrapper, 'padding-left'));
-        const beautySpace = 10;
 
-        return wrapperWidth - (wrapperPaddings - beautySpace);
+        return wrapperWidth - (wrapperPaddings - this.beautySpace);
     }
 
     getElementUsedWidth(element) {
@@ -916,7 +931,7 @@ class Select {
             actualOption.remove();
         }
 
-        this.showOptionsInWrapper(optionsWrapper, newOptions, false);
+        this.showOptionsInWrapper(optionsWrapper, newOptions);
         this.bindSelection(optionsWrapper.querySelectorAll('div'), selectId);
         this.selects[selectId].options = [...newOptionsData];
     }
@@ -938,7 +953,7 @@ class Select {
     }
 
     filterOptions(searchFor, selectId) {
-        const options = this.selects[selectId].defaultOptions;
+        const options = this.isMultiselect(selectId) ? this.selectableOptions(selectId) : this.selects[selectId].defaultOptions;
         let filtered = [];
         const usedValues = [];
 
@@ -963,6 +978,24 @@ class Select {
         }
 
         return filtered;
+    }
+
+    // selectedOptions \ defaultOptions
+    selectableOptions(selectId) {
+        const notSearchableOptionValues = [];
+        const forSearching = [];
+
+        for (const option of this.selects[selectId].selectedOption) {
+            notSearchableOptionValues.push(option.value);
+        }
+
+        for (const defaultOption of [...this.selects[selectId].defaultOptions]) {
+            if (!notSearchableOptionValues.includes(defaultOption.value)) {
+                forSearching.push(defaultOption);
+            }
+        }
+
+        return forSearching;
     }
 
     replaceOptions(options, arrayOfNewOptions, selectId) {
