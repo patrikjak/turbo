@@ -42,6 +42,7 @@ class Turbo {
                 multiselect: {
                     hideSelected: true,
                     hideOptionsAfterSelect: false,
+                    autoSelectFirstOption: false,
                 }
             }
         };

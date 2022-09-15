@@ -25,6 +25,10 @@ class Select {
                     const turboSelectId = `turbo-select-${i + 1}`;
                     this.generateTurboSelect(turboSelectWrapper, turboSelectId);
                     this.bindSelectActions(turboSelectWrapper);
+
+                    if (this.isMultiselect(turboSelectId) && this.selects[turboSelectId].settings.multiselect.autoSelectFirstOption) {
+                        this.autoSelectFirstOption(turboSelectId);
+                    }
                 }
             }
         }
@@ -275,6 +279,7 @@ class Select {
             this.selects[id].settings.multiselect = {};
             this.selects[id].settings.multiselect.hideSelected = wrapperId && typeof this.custom[wrapperId]?.settings?.multiselect?.hideSelected !== 'undefined' ? this.custom[wrapperId].settings.multiselect.hideSelected : this.turbo.settings.select.multiselect.hideSelected;
             this.selects[id].settings.multiselect.hideOptionsAfterSelect = wrapperId && typeof this.custom[wrapperId]?.settings?.multiselect?.hideOptionsAfterSelect !== 'undefined' ? this.custom[wrapperId].settings.multiselect.hideOptionsAfterSelect : this.turbo.settings.select.multiselect.hideOptionsAfterSelect;
+            this.selects[id].settings.multiselect.autoSelectFirstOption = wrapperId && typeof this.custom[wrapperId]?.settings?.multiselect?.autoSelectFirstOption !== 'undefined' ? this.custom[wrapperId].settings.multiselect.autoSelectFirstOption : this.turbo.settings.select.multiselect.autoSelectFirstOption;
         }
     }
 
@@ -522,6 +527,19 @@ class Select {
                     this.triggerChangeEvent(realSelect);
                 }
             }, this.animationSettings.duration);
+        }
+    }
+
+    autoSelectFirstOption(selectId, index = 0) {
+        const turboSelectWrapper = this.selects[selectId].wrapper;
+        const realSelect = turboSelectWrapper.closest('.turbo-ui.select').querySelector('select');
+
+        if (index < realSelect.options.length) {
+            if (this.canSelectOption(realSelect.options[index], selectId)) {
+                this.selectRealOption(selectId, realSelect.options[index].value);
+            } else {
+                this.autoSelectFirstOption(selectId, index + 1);
+            }
         }
     }
 
@@ -798,15 +816,19 @@ class Select {
 
         if (this.turbo.isNode(option)) {
             selectedValue = this.turbo.getData(option, 'value');
+
+            if (!!!selectedValue) {
+                selectedValue = option.value;
+            }
         }
 
         const optionInfo = this.getOptionInfoByValue(selectId, selectedValue);
 
-        if (optionInfo?.disabled) {
+        if (!!optionInfo?.disabled) {
             return false;
         }
 
-        if (optionInfo?.notFoundOption) {
+        if (!!optionInfo?.notFoundOption) {
             return false;
         }
 
