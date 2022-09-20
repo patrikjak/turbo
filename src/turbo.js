@@ -603,6 +603,115 @@ class Turbo {
         element.style.animationDuration = `${newAnimationDuration}ms`;
         element.classList.add(newAnimationClass);
     }
+
+    collectFormData(form, except = ['_method', '_token']) {
+        form = this.beNode(form);
+
+        const inputs = form.querySelectorAll('input');
+        const selects = form.querySelectorAll('select');
+        const textareas = form.querySelectorAll('textarea');
+        const _this = this;
+
+        let collectedData = {};
+
+        collectedData = {
+            ...collectedData,
+            ..._this.getDataFromInputs(inputs, except),
+            ..._this.getDataFromSelects(selects, except),
+            ..._this.getDataFromTextareas(textareas, except)
+        };
+
+        return collectedData;
+    }
+
+    getDataFromInputs(inputs, except) {
+        let usedCheckboxValues = {};
+        let data = {};
+
+        for (let i = 0; i < inputs.length; i++) {
+            const input = inputs[i];
+            const inputName = input.getAttribute('name');
+
+            if (input.type === 'submit' || input.closest('.turbo-ui.select') !== null) {
+                continue;
+            }
+
+            if (!except.includes(inputName)) {
+                if (input.type === 'checkbox') {
+                    if (usedCheckboxValues.hasOwnProperty(inputName)) {
+                        if (input.checked) {
+                            usedCheckboxValues[inputName].push(input.value);
+                        }
+
+                        usedCheckboxValues[`${inputName}-count`]++;
+                    } else {
+                        usedCheckboxValues[inputName] = [];
+                        usedCheckboxValues[`${inputName}-count`] = 0;
+
+                        if (input.checked) {
+                            usedCheckboxValues[inputName].push(input.value);
+                        }
+                    }
+
+                    // multiple choices are checked, get values instead of boolean value
+                    if (usedCheckboxValues[`${inputName}-count`] > 1) {
+                        data[inputName] = usedCheckboxValues[inputName];
+                    } else {
+                        data[inputName] = input.checked;
+                    }
+                } else if (input.type === 'radio') {
+                    if (input.checked) {
+                        data[inputName] = input.value;
+                    } else if (this.isEmpty(data[inputName])) {
+                        data[inputName] = null;
+                    }
+                } else {
+                    data[inputName] = input.value;
+                }
+            }
+        }
+
+        return data;
+    }
+
+    getDataFromSelects(selects, except) {
+        let data = {};
+
+        for (let i = 0; i < selects.length; i++) {
+            const select = selects[i];
+            const selectName = select.getAttribute('name');
+
+            if (!except.includes(selectName)) {
+                if (select.hasAttribute('multiple')) {
+                    data[selectName] = [];
+
+                    for (const option of select.options) {
+                        if (option.selected) {
+                            data[selectName].push(option.value);
+                        }
+                    }
+                } else {
+                    data[selectName] = selects[i].value;
+                }
+            }
+        }
+
+        return data;
+    }
+
+    getDataFromTextareas(textareas, except) {
+        let data = {};
+
+        for (let i = 0; i < textareas.length; i++) {
+            const textareaName = textareas[i].getAttribute('name');
+
+            if (!except.includes(textareaName)) {
+                data[textareaName] = textareas[i].value;
+            }
+        }
+
+        return data;
+    }
 }
 
 module.exports = Turbo;
