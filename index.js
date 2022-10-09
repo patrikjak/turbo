@@ -10,4 +10,4 @@ module.exports = {
     turbo: turboInstance,
     select: selectInstance,
     validator: validatorInstance,
-}
+};

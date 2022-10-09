@@ -8,13 +8,9 @@ Useful JS functions to use
 
 ___
 
-## Components (HTML)
+## Turbo Start Styling
 
-Find components [here](https://github.com/patrikjak)
-
-## Design of components
-
-Get [default style](https://github.com/patrikjak)
+Check example [here](https://github.com/patrikjak/turbo/blob/main/example/index.html) and pimp your page
 
 ___
 
@@ -32,6 +28,7 @@ turbo.settings.text.cancel = 'Cancel';
 turbo.settings.text.confirm = 'Confirm';
 turbo.settings.text.info = 'Info';
 turbo.settings.notFound = 'No results found';
+turbo.settings.allSelected = 'All options have been selected';
 
 // notification settings
 turbo.settings.notification.autoHide = true;
@@ -42,6 +39,11 @@ turbo.settings.notification.showCloseButton = true;
 turbo.settings.select.searchAlsoValue = false;
 turbo.settings.select.notFoundOptionValue = '-';
 turbo.settings.select.hideDisabledOptions = false;
+
+//turbo multiselect
+turbo.settings.select.multiselect.hideSelected = true;
+turbo.settings.select.multiselect.hideOptionsAfterSelect = false;
+turbo.settings.select.multiselect.autoSelectFirstOption = false;
 ```
 
 ## Methods
@@ -183,7 +185,7 @@ clicking cancel (_reject()_) or confirm button (_resolve()_)
 turbo.showConfirmation('Are your sure?');
 ```
 
-``turbo.notify(message, heading, level)`` - show notification with custom message and heading,
+``notify(message, heading, level)`` - show notification with custom message and heading,
 notification can have one of levels below, level - notification left border color
 
 ```js
@@ -191,7 +193,7 @@ notification can have one of levels below, level - notification left border colo
 turbo.notify('Data was not saved', 'Saving', 'error');
 ```
 
-``turbo.floatingPlaceholders(element)`` - get right functionality of floating placeholders
+``floatingPlaceholders(element)`` - get right functionality of floating placeholders
 
 ```js
 const form = document.querySelector('#my-form');
@@ -199,7 +201,7 @@ const form = document.querySelector('#my-form');
 turbo.floatingPlaceholders(form);
 ```
 
-``capitalizeFirstLetter(string)`` - capitalize first letter in string
+``capitalizeFirstLetter(string)`` - capitalize the first letter in the string
 
 ```js
 turbo.capitalizeFirstLetter('title');
@@ -216,14 +218,50 @@ const options = document.querySelector('.options');
 turbo.toggleAnimationClass(options, 'animation-slide-in-top', 150);
 ```
 
-``initSelects(selector, reloadDefaults)`` -
-init custom selects
+``collectFormData(form, except)`` - collect all form data except name of the inputs
+
+object key is the attribute name of the input
+
+```js
+turbo.collectFormData('#my-form');
+//> {name: 'John', email: 'john@example.com'}
+```
+
+## Turbo Select
+___
+
+``initSelects()`` - init turbo selects
 
 - hide original select element and show custom
 - original select element must be in wrapper with classes .turbo-ui.select
-- if original select has .searchable class, custom select will be searchable
+- searchable select - add a class 'searchable' for the select element
+- multiselect - add a class 'multiselect' for the select element
 
 ```js
-// default selector is document
-turbo.initSelects();
+turboSelect.initSelects();
+
+// this method will replace all selects with turbo select
+```
+
+## Turbo Validator
+___
+turboValidator.validate() - validate inputs
+
+- if form will not be valid, errors appear automatically
+
+```js
+const rules = {
+    name: {
+        rules: 'required|max:8',
+        fieldName: 'your turbo name' // define custom label for the field
+    },
+    surname: 'required',
+    agreement: 'accepted', // checkbox must be checked
+};
+const form = document.querySelector('#form');
+
+form.querySelector('input[type="submit"]').addEventListener('click', e => {
+    e.preventDefault();
+    turboValidator.validate(form, rules);
+});
 ```
