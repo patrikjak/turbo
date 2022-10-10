@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <title>Turbo Example</title>
+    <link rel="stylesheet" href="../style/turbo.css">
+    <link rel="stylesheet" href="style/example.css">
+</head>
+<body onload="setColorMode()">
+
+<div class="page">
+    <div class="navigation">
+        <h1>Turbo Start</h1>
+        <p>element styles</p>
+        <div class="nav-items">
+            <div class="item">
+                <a href="#intro">General info</a>
+            </div>
+            <div class="item">
+                <a href="#button">Button</a>
+            </div>
+            <div class="item">
+                <a href="#inputs">Inputs</a>
+            </div>
+            <div class="item">
+                <a href="#selects">Selects</a>
+            </div>
+            <div class="item">
+                <a href="#modal">Modal</a>
+            </div>
+        </div>
+        <div class="color-mode-switch">
+            <p>Dark mode</p>
+            <div class="turbo-ui toggle">
+                <input type="checkbox" id="dark-mode">
+                <label for="dark-mode"></label>
+            </div>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="section" id="intro">
+            <h2>General info</h2>
+            <div class="section-info">
+                <p>For now it's about styling of the elements</p>
+                <p>All variables you can find in <code>style/turbo.scss</code> file</p>
+                <p>If you want change color in dark mode, use these variables with the prefix <strong>dark-</strong></p>
+                <p class="top-space">Example:</p>
+                <pre>
+                    <code>
+                        $button-background: #ffffff;
+                        $dark-button-background: #000000;
+                    </code>
+                </pre>
+                <p>Button, selects, modals are not interactive</p>
+                <p>If you fill input, the label will not be floating</p>
+            </div>
+        </div>
+        <div class="section" id="button">
+            <h2>Button</h2>
+            <div class="section-info">
+                <p><code>$button-background</code> - background color</p>
+                <p><code>$button-font-color</code> - font color</p>
+                <p><code>$button-border-color</code> - border color</p>
+            </div>
+            <div class="example">
+                <button>Click me</button>
+            </div>
+        </div>
+
+        <div class="section" id="inputs">
+            <h2>Inputs</h2>
+            <div class="section-info">
+                <p><code>$input-background-color</code> - input background color</p>
+                <p><code>$input-border-color</code> - input border color</p>
+                <p><code>$input-font-color</code> - input font color</p>
+
+                <p class="top-space"><code>$submit-background-color</code> - input type submit background color</p>
+                <p><code>$submit-border-color</code> - input type submit border color</p>
+                <p><code>$submit-font-color</code> - input type submit font color</p>
+
+                <p class="top-space"><code>$checkbox-background</code> - checkbox background color</p>
+                <p><code>$checkbox-checked-background</code> - checked checkbox background color</p>
+                <p><code>$radio-border-color</code> - input type radio border color</p>
+
+                <p class="top-space"><code>$input-left</code> - left padding of all radio and checkbox inputs and toggle button</p>
+                <p><code>$toggle-width</code> - width of toggle button</p>
+            </div>
+            <div class="example">
+                <h3 class="section-heading">Text</h3>
+                <div class="group group-3">
+                    <div class="turbo-ui input">
+                        <input type="text" name="input" id="input">
+                        <label for="input">Input</label>
+                    </div>
+
+                    <div class="turbo-ui input">
+                        <input type="text" name="input-filled" id="input-filled" value="Filled" class="filled">
+                        <label for="input-filled">Input</label>
+                    </div>
+
+                    <div class="turbo-ui input error">
+                        <input type="text" name="input-error" id="input-error">
+                        <label for="input-error">Input with error</label>
+                        <p class="input-error">Error message</p>
+                    </div>
+                </div>
+
+                <div class="smaller-width">
+                    <div class="turbo-ui input">
+                        <textarea name="textarea" id="textarea"></textarea>
+                        <label for="textarea">Textarea</label>
+                    </div>
+
+                    <h3 class="section-heading">Submit</h3>
+                    <div class="turbo-ui input">
+                        <input type="submit" name="submit" value="Send">
+                    </div>
+
+                    <h3 class="section-heading">Radio, Checkbox</h3>
+                    <div class="turbo-ui radio">
+                        <input type="radio" name="radio" id="radio1">
+                        <label for="radio1">Radio button 1</label>
+                    </div>
+                    <div class="turbo-ui radio">
+                        <input type="radio" name="radio" id="radio2">
+                        <label for="radio2">Radio button 2</label>
+                    </div>
+                    <div class="turbo-ui checkbox">
+                        <input type="checkbox" name="checkbox" id="checkbox">
+                        <label for="checkbox">Checkbox</label>
+                    </div>
+
+                    <h3 class="section-heading">Toggle</h3>
+                    <div class="turbo-ui toggle">
+                        <input type="checkbox" id="switch" name="switch">
+                        <label for="switch">Toggle</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section" id="selects">
+            <h2>Selects</h2>
+            <div class="section-info">
+                <p>Opened selects looks the same as classic</p>
+                <p>The active option is bold except multiselect, disabled options are with lower opacity</p>
+                <p class="top-space"><code>$select-background</code> - select background color</p>
+                <p><code>$select-options-background</code> - select options wrapper background color</p>
+                <p><code>$select-border-color</code> - select border color</p>
+                <p><code>$select-label-color</code> - select label font color</p>
+                <p><code>$select-arrow-color</code> - select arrow background color</p>
+                <p><code>$select-scrollbar-color</code> - select scrollbar color</p>
+
+                <p class="top-space"><code>$select-active-item-color</code> - select active option font color</p>
+                <p><code>$select-active-item-weight</code> - select active option font weight</p>
+
+                <p class="top-space"><code>$select-disabled-item-color</code> - select disabled option font color</p>
+                <p><code>$select-disabled-item-opacity</code> - select disabled option text opacity</p>
+
+                <p class="top-space"><code>$select-not-found-item-color</code> - select not found option font color</p>
+
+                <p class="top-space"><code>$select-item-color</code> - select item font color</p>
+                <p><code>$select-item-hover-color</code> - select item background color on hover</p>
+
+                <p class="top-space"><code>$multiselect-selected-background</code> - multiselect selected option background color</p>
+                <p><code>$multiselect-selected-font-color</code> - multiselect selected option font color</p>
+            </div>
+
+            <h3 class="section-heading">Classic</h3>
+            <div class="example">
+                <div class="group group-3">
+                    <div class="turbo-ui select">
+                        <div class="turbo-select" id="turbo-select-1">
+                            <div class="options-wrapper">
+                                <div class="label">Select option</div>
+                                <div class="options">
+                                    <div data-value="option-1">Option 1</div>
+                                    <div data-value="option-2">Option 2</div>
+                                    <div data-value="option-3">Option 3</div>
+                                    <div data-value="option-4">Option 4</div>
+                                    <div data-value="option-5">Option 5</div>
+                                    <div data-value="option-6">Option 6</div>
+                                </div>
+                            </div>
+                            <div class="dropdown-arrow">
+                                <div class="arrow-part"></div>
+                                <div class="arrow-part"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="turbo-ui select">
+                        <div class="turbo-select" id="turbo-select-3">
+                            <div class="options-wrapper">
+                                <div class="label">Option 3</div>
+                                <div class="options opened">
+                                    <div class="disabled" data-value="option-1">Option 1</div>
+                                    <div data-value="option-2">Option 2</div>
+                                    <div class="active" data-value="option-3">Option 3</div>
+                                    <div data-value="option-4">Option 4</div>
+                                    <div data-value="option-5">Option 5</div>
+                                    <div data-value="option-6">Option 6</div>
+                                    <div data-value="option-7">Option 7</div>
+                                    <div class="disabled" data-value="option-8">Option 8</div>
+                                    <div data-value="option-9">Option 9</div>
+                                    <div data-value="option-10">Option 10</div>
+                                    <div data-value="option-11">Option 11</div>
+                                    <div data-value="option-12">Option 12</div>
+                                    <div class="disabled" data-value="option-13">Option 13</div>
+                                </div>
+                            </div>
+                            <div class="dropdown-arrow">
+                                <div class="arrow-part"></div>
+                                <div class="arrow-part"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="turbo-ui select">
+                        <div class="turbo-select" id="turbo-select-2">
+                            <div class="options-wrapper">
+                                <div class="label selected">Option 3</div>
+                                <div class="options">
+                                    <div data-value="option-1">Option 1</div>
+                                    <div data-value="option-2">Option 2</div>
+                                    <div class="active" data-value="option-3">Option 3</div>
+                                    <div data-value="option-4">Option 4</div>
+                                    <div data-value="option-5">Option 5</div>
+                                    <div data-value="option-6">Option 6</div>
+                                </div>
+                            </div>
+                            <div class="dropdown-arrow">
+                                <div class="arrow-part"></div>
+                                <div class="arrow-part"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="section-heading">Searchable</h3>
+            <div class="group group-3">
+                <div class="turbo-ui select">
+                    <div class="turbo-select" id="turbo-select-4">
+                        <div class="options-wrapper">
+                            <div class="label search">
+                                <input placeholder="Select option" class="options-search" autocomplete="off">
+                            </div>
+                            <div class="options">
+                                <div data-value="option-1">Option 1</div>
+                                <div data-value="option-2">Option 2</div>
+                                <div class="disabled" data-value="option-3">Option 3</div>
+                                <div data-value="option-4">Option 4</div>
+                            </div>
+                        </div>
+                        <div class="dropdown-arrow">
+                            <div class="arrow-part"></div>
+                            <div class="arrow-part"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="turbo-ui select">
+                    <div class="turbo-select" id="turbo-select-7">
+                        <div class="options-wrapper">
+                            <div class="label search selected">
+                                <input placeholder="Color" class="options-search" autocomplete="off" value="afwdawwfe">
+                            </div>
+                            <div class="options opened">
+                                <div class="disabled not-found-option" data-value="-">No results found</div>
+                            </div>
+                        </div>
+                        <div class="dropdown-arrow">
+                            <div class="arrow-part"></div>
+                            <div class="arrow-part"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="section-heading">Multiselect</h3>
+            <div class="group group-3">
+                <div class="turbo-ui select">
+                    <div class="turbo-select multiselect" id="turbo-select-5">
+                        <div class="options-wrapper">
+                            <div class="label selected" style="height: auto">
+                                <div class="selected-option" data-value="grey">
+                                    Short
+                                    <div class="remove-button">
+                                        <div class="remove-line"></div>
+                                        <div class="remove-line"></div>
+                                    </div>
+                                </div>
+                                <div class="selected-option" data-value="yellow">
+                                    Text
+                                    <div class="remove-button">
+                                        <div class="remove-line"></div>
+                                        <div class="remove-line"></div>
+                                    </div>
+                                </div>
+                                <div class="selected-option next-row" data-value="black">
+                                    Loooooooong
+                                    <div class="remove-button">
+                                        <div class="remove-line"></div>
+                                        <div class="remove-line"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="options">
+                                <div data-value="option-1">Short</div>
+                                <div data-value="option-2">Loooooooong</div>
+                                <div data-value="option-3">Text</div>
+                                <div data-value="option-4">Option</div>
+                            </div>
+                        </div>
+                        <div class="dropdown-arrow">
+                            <div class="arrow-part"></div>
+                            <div class="arrow-part"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const switcher = document.querySelector('.color-mode-switch input');
+    const body = document.querySelector('body');
+
+    function setColorMode() {
+        const darkMode = localStorage.getItem('dark-mode');
+
+        if (darkMode && darkMode === 'true') {
+            switcher.checked = true;
+            body.classList.add('dark-mode');
+        }
+    }
+
+    switcher.addEventListener('click', () => {
+        const switchToDarkMode = switcher.checked;
+
+        if (switchToDarkMode) {
+            body.classList.add('dark-mode');
+            localStorage.setItem('dark-mode', 'true');
+        } else {
+            body.classList.remove('dark-mode');
+            localStorage.setItem('dark-mode', 'false');
+        }
+    });
+</script>
+
+</body>
+</html>

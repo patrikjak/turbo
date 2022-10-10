@@ -1,0 +1,727 @@
+// --------------------------------------------------
+// GENERAL VARIABLES
+// --------------------------------------------------
+
+@use "sass:color";
+$transition-duration: 300ms;
+
+// BRAND COLORS
+$brand-dark-blue: #002129;
+$brand-green: #99C24d;
+$brand-blue: #00627a;
+$brand-white: #f3f2fa;
+
+// GENERAL COLORS
+$grey: #bdbdbd;
+$light-grey: #e8e8e8;
+$error: #b3261e;
+$test: blue;
+
+// --------------------------------------------------
+// --- GENERAL VARIABLES ---
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+// BUTTON
+// --------------------------------------------------
+
+$button-background: $brand-green;
+$button-border-color: $brand-green;
+$button-font-color: #ffffff;
+
+$dark-button-background: $brand-green;
+$dark-button-border-color: $brand-green;
+$dark-button-font-color: #ffffff;
+
+button {
+    padding: .5rem 2rem;
+    background-color: $button-background;
+    color: $button-font-color;
+    cursor: pointer;
+    border: solid $button-border-color 0.125rem;
+    border-radius: 0.1875rem;
+    font-size: 1rem;
+    transition-duration: $transition-duration;
+
+    body.dark-mode & {
+        background-color: $dark-button-background;
+        border-color: $dark-button-border-color;
+    }
+
+    &:hover {
+        transform: scale(1.05, 1.05);
+    }
+}
+
+// --------------------------------------------------
+// FORM ERRORS
+// --------------------------------------------------
+
+.turbo-ui.input .input-error,
+.turbo-ui.checkbox .input-error,
+.turbo-ui.radio .input-error,
+.turbo-ui.select .input-error {
+    font-size: 0.875rem;
+    margin-top: .5rem;
+    color: $error;
+    padding-left: 1.25rem;
+}
+
+.turbo-ui.checkbox .input-error,
+.turbo-ui.radio .input-error {
+    padding-left: 0;
+}
+
+// --------------------------------------------------
+// --- FORM ERRORS ---
+// --------------------------------------------------
+
+// --------------------------------------------------
+// --- BUTTON ---
+// --------------------------------------------------
+
+// --------------------------------------------------
+// INPUT, TEXTAREA
+// --------------------------------------------------
+
+$input-background-color: $light-grey;
+$input-border-color: $grey;
+$input-font-color: $brand-dark-blue;
+
+$submit-background-color: $brand-green;
+$submit-border-color: $brand-green;
+$submit-font-color: $brand-white;
+
+$dark-input-background-color: color.scale($grey, $lightness: 15%);
+$dark-input-border-color: $brand-white;
+$dark-input-font-color: $brand-dark-blue;
+
+$dark-submit-background-color: $brand-green;
+$dark-submit-border-color: $brand-green;
+$dark-submit-font-color: $brand-white;
+
+.turbo-ui.input {
+    position: relative;
+    width: 100%;
+    height: auto;
+    margin: 1.5rem 0 0 0;
+
+    & label {
+        padding: 0.875rem 1.25rem;
+        font-size: 1rem;
+        transition: .3s ease all;
+        pointer-events: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        color: $input-font-color;
+    }
+
+    & input,
+    & textarea {
+        display: block;
+        color: $input-font-color;
+
+        &:focus {
+            border-color: transparent;
+            box-shadow: none;
+            outline: none;
+        }
+    }
+
+    & input:-webkit-autofill {
+        -webkit-box-shadow: 0, 0, 0, 1.875rem $input-background-color intent !important;
+        transition: background-color 5000s ease-in-out 0s;
+
+        body.dark-mode & {
+            -webkit-box-shadow: 0, 0, 0, 1.875rem $dark-input-background-color intent !important;
+        }
+    }
+
+    & input:not([type="submit"]),
+    & textarea {
+        width: 100%;
+        border: solid .125rem $input-background-color;
+        border-radius: .25rem;
+        padding: .75rem 1.25rem;
+        box-shadow: none;
+        background-color: $input-background-color;
+        height: 3rem;
+        font-family: inherit;
+        font-size: 1rem;
+        resize: vertical;
+
+        body.dark-mode & {
+            border-color: $dark-input-background-color;
+            background-color: $dark-input-background-color;
+        }
+
+        &:focus {
+            border-color: $input-border-color;
+
+            body.dark-mode & {
+                border-color: $dark-input-border-color;
+            }
+        }
+
+        &:focus + label,
+        &:-webkit-autofill + label,
+        &.filled + label {
+            font-size: 0.75rem;
+            top: -0.6rem;
+            left: calc(1.25rem - 0.3125rem);
+            padding: 0.1875rem 0.3125rem;
+            background-color: $input-background-color;
+            border-radius: .125rem;
+
+            body.dark-mode & {
+                background-color: $dark-input-background-color;
+            }
+        }
+    }
+
+    &.error {
+        & label {
+            color: $error;
+        }
+
+        & input:not([type="submit"]),
+        & textarea {
+            border-color: $error;
+        }
+    }
+
+    & input[type="submit"] {
+        width: 100%;
+        height: 3rem;
+        text-align: center;
+        padding: .75rem 3rem;
+        border-radius: .25rem;
+        background-color: $submit-background-color;
+        color: $submit-font-color;
+        border: solid 0.125rem $submit-border-color;
+        cursor: pointer;
+        transition-duration: .3s;
+        font-size: 1rem;
+
+        body.dark-mode & {
+            background-color: $dark-submit-background-color;
+            border-color: $dark-submit-border-color;
+            color: $dark-submit-font-color;
+        }
+
+        &:hover {
+            transform: scale(1.05, 1.05);
+        }
+    }
+}
+
+// --------------------------------------------------
+// --- INPUT, TEXTAREA ---
+// --------------------------------------------------
+
+// --------------------------------------------------
+// CHECKBOX, RADIO, TOGGLE
+// --------------------------------------------------
+
+$checkbox-background: $light-grey;
+$checkbox-checked-background: #337ab7;
+$radio-border-color: #cccccc;
+
+$dark-checkbox-background: $light-grey;
+$dark-checkbox-checked-background: #337ab7;
+$dark-radio-border-color: #cccccc;
+
+$input-left: 1rem;
+
+.turbo-ui.checkbox,
+.turbo-ui.radio,
+.turbo-ui.toggle {
+    position: relative;
+    padding: 1rem 1rem 1rem $input-left;
+    text-align: left;
+
+    label {
+        cursor: pointer;
+        margin-left: 2.5rem;
+        line-height: 1.75rem;
+
+        &:before,
+        &:after {
+            content: '';
+            position: absolute;
+        }
+
+        &:before {
+            width: 1.5rem;
+            height: 1.5rem;
+            background-color: $checkbox-background;
+            border: solid $checkbox-background 0.125rem;
+            border-radius: 0.125rem;
+            left: $input-left;
+            transition: .3s;
+
+            body.dark-mode & {
+                background-color: $dark-checkbox-background;
+                border-color: $dark-checkbox-background;
+            }
+        }
+    }
+
+    input {
+        position: absolute;
+        outline: none;
+        top: 0;
+        left: -999px;
+        visibility: hidden;
+
+        &:disabled + label {
+            cursor: default;
+
+            &:before {
+                border-color: rgba(0, 0, 0, .26);
+            }
+        }
+
+        &:disabled:checked + label:before {
+            background-color: rgba(0, 0, 0, .26);
+            border-color: rgba(0, 0, 0, .26);
+        }
+
+        &:checked + label {
+            &:before {
+                background-color: $checkbox-checked-background;
+                border: solid $checkbox-checked-background 0.125rem;
+
+                body.dark-mode & {
+                    background-color: $dark-checkbox-checked-background;
+                    border-color: $dark-checkbox-checked-background;
+                }
+            }
+
+            &:after {
+                left: $input-left;
+                background-color: transparent;
+                width: .9rem;
+                height: .35rem;
+                transform: translate(.4rem, .45rem) rotate(-55deg);
+                border: solid .175rem #ffffff;
+                border-top: none;
+                border-right: none;
+            }
+        }
+    }
+}
+
+.turbo-ui.radio {
+    & label:before {
+        border-radius: 50%;
+    }
+
+    & input:checked + label {
+        &:before {
+            background-color: $checkbox-background;
+            border-color: $radio-border-color;
+
+            body.dark-mode & {
+                border-color: $dark-radio-border-color;
+            }
+        }
+
+        &:after {
+            background-color: $checkbox-checked-background;
+            width: 1rem;
+            height: 1rem;
+            transform: translate(0, .25rem);
+            border-radius: 50%;
+            left: calc(#{$input-left + .25});
+            border: solid $checkbox-checked-background .125rem;
+
+            body.dark-mode & {
+                background-color: $dark-checkbox-checked-background;
+                border-color: $dark-checkbox-checked-background;
+            }
+        }
+    }
+}
+
+$toggle-width: 4rem;
+
+$toggle-height: $toggle-width / 2;
+$point-ratio: .38;
+$point-size: $toggle-width * $point-ratio;
+$toggle-border-radius: $toggle-width / 2;
+$margin-ratio: .085;
+$point-margin: $toggle-width * $margin-ratio;
+
+.turbo-ui.toggle {
+    & label {
+        display: flex;
+        align-items: center;
+        text-indent: -99999px;
+        width: $toggle-width;
+        border: none;
+        margin-left: 0;
+
+        &:before {
+            width: $toggle-width;
+            height: $toggle-height;
+            border-radius: $toggle-height;
+            border: none;
+        }
+
+        &:after {
+            background-color: $checkbox-checked-background;
+            width: $point-size;
+            height: $point-size;
+            border-radius: 50%;
+            left: #{$input-left + $point-margin};
+            transform: none;
+            transition: cubic-bezier(0.68, -0.55, 0.27, 01.55) 300ms;
+
+            body.dark-mode & {
+                background-color: $dark-checkbox-checked-background;
+            }
+        }
+    }
+
+    & input:checked + label {
+        &:before {
+            background-color: $checkbox-checked-background;
+            border: none;
+
+            body.dark-mode & {
+                background-color: $dark-checkbox-checked-background;
+            }
+        }
+
+        &:after {
+            width: $point-size;
+            height: $point-size;
+            background-color: $checkbox-background;
+            transform: translateX(#{$toggle-width - $point-size - (2 * $point-margin)});
+            left: #{$input-left + $point-margin};
+            border: none;
+
+            body.dark-mode & {
+                background-color: $checkbox-background;
+            }
+        }
+    }
+}
+
+// --------------------------------------------------
+// --- CHECKBOX, RADIO, TOGGLE ---
+// --------------------------------------------------
+
+// --------------------------------------------------
+// SELECT
+// --------------------------------------------------
+
+$select-background: $light-grey;
+$select-options-background: #fbfbfb;
+$select-border-color: #cccccc;
+$select-label-color: #000000;
+$select-arrow-color: #000000;
+$select-scrollbar-color: $brand-blue;
+
+$select-active-item-color: #000000;
+$select-active-item-weight: 600;
+
+$select-disabled-item-color: #000000;
+$select-disabled-item-opacity: .7;
+
+$select-not-found-item-color: #000000;
+$select-item-color: #000000;
+$select-item-hover-color: #ededed;
+
+$multiselect-selected-background: $brand-blue;
+$multiselect-selected-font-color: #ffffff;
+
+
+$dark-dark-select-background: $light-grey;
+$dark-select-options-background: #fbfbfb;
+$dark-select-border-color: #cccccc;
+$dark-select-label-color: #000000;
+$dark-select-arrow-color: #000000;
+$dark-select-scrollbar-color: $brand-blue;
+
+$dark-select-active-item-color: #000000;
+$dark-select-active-item-weight: 600;
+
+$dark-select-disabled-item-color: #000000;
+$dark-select-disabled-item-opacity: .7;
+
+$dark-select-not-found-item-color: #000000;
+$dark-select-item-color: #000000;
+$dark-select-item-hover-color: #ededed;
+
+$dark-multiselect-selected-background: $brand-blue;
+$dark-multiselect-selected-font-color: #ffffff;
+
+.turbo-ui.select {
+    ::-webkit-scrollbar,
+    ::-webkit-scrollbar {
+        width: .5rem;
+        height: .5rem;
+    }
+
+    ::-webkit-scrollbar-track,
+    ::-webkit-scrollbar-track {
+        background-color: #f5f5f5;
+        border-radius: $select-scrollbar-color;
+    }
+
+    ::-webkit-scrollbar-thumb,
+    ::-webkit-scrollbar-thumb {
+        background-color: $select-scrollbar-color;
+        border-radius: .125rem;
+    }
+
+    label, select {
+        display: none;
+    }
+
+    & .turbo-select {
+        min-width: 10rem;
+        max-width: 100%;
+        height: 2.65rem;
+        display: flex;
+        justify-content: space-between;
+        border: solid 0.0625rem $select-border-color;
+        background-color: $select-background;
+        border-radius: 0.1875rem;
+
+        &.multiselect {
+            height: auto;
+            min-height: 2.65rem;
+
+            & .label {
+                & div.selected-option {
+                    line-height: initial;
+                }
+            }
+        }
+
+        &.searchable .options-wrapper {
+            cursor: text;
+        }
+
+        &.multiselect .label.search {
+            position: initial;
+            top: unset;
+            left: unset;
+            margin-left: 0;
+            min-height: 2.65rem;
+            height: auto;
+
+            & input {
+                position: initial;
+                max-width: 5rem;
+                width: auto;
+                display: inline-flex;
+                padding-left: 0;
+                min-height: 2.65rem;
+            }
+
+            &.selected input {
+                margin-left: .5rem;
+            }
+        }
+    }
+
+    & .options-wrapper {
+        width: calc(100% - 3rem);
+        min-width: 7rem;
+        display: flex;
+        align-items: center;
+        padding-left: 3%;
+        cursor: pointer;
+        position: relative;
+        user-select: none;
+        min-height: 2.65rem;
+    }
+
+    & .label {
+        opacity: .6;
+        height: 2.65rem;
+        line-height: 2.65rem;
+        color: $select-label-color;
+
+        &.selected {
+            opacity: 1;
+        }
+
+        &.search {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+        }
+
+        & div.selected-option {
+            padding: .25rem .8rem .25rem 1rem;
+            text-align: center;
+            min-width: 4rem;
+            background-color: $multiselect-selected-background;
+            color: $multiselect-selected-font-color;
+            border-radius: .25rem;
+            position: relative;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            cursor: default;
+            margin: .5rem .8rem .5rem 0;
+
+            &.next-row {
+                margin-top: 0;
+            }
+        }
+
+        & div.remove-button {
+            width: 1rem;
+            height: 1rem;
+            margin-left: .4rem;
+            position: relative;
+            cursor: pointer;
+            border-radius: .25rem;
+
+            & div.remove-line {
+                width: .7rem;
+                height: 0.125rem;
+                background-color: $multiselect-selected-font-color;
+                position: absolute;
+                right: 0;
+
+                &:first-child {
+                    transform: rotate(45deg) translate(.3rem, .3rem);
+                }
+
+                &:last-child {
+                    transform: rotate(-45deg) translate(-.3rem, .3rem);
+                }
+            }
+        }
+
+        & input {
+            font-family: inherit;
+            height: 100%;
+            width: 100%;
+            border: none;
+            font-size: 1rem;
+            background-color: transparent;
+            padding-left: 3%;
+
+            &::placeholder {
+                opacity: 1;
+                color: $select-label-color;
+            }
+
+            &::-ms-input-placeholder {
+                opacity: 1;
+                color: $select-label-color;
+            }
+        }
+    }
+
+    & .options {
+        display: none;
+        align-self: flex-start;
+        margin-top: 2.5rem;
+        position: absolute;
+        top: -0.0625rem;
+        left: -0.0625rem;
+        background-color: $select-options-background;
+        width: calc(100% + 3.0625rem);
+        z-index: 1000;
+        border-bottom-left-radius: .25rem;
+        border-bottom-right-radius: .25rem;
+        box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
+        max-height: 15rem;
+        overflow-y: auto;
+        color: $select-item-color;
+
+        body.dark-mode & {
+            background-color: $dark-select-options-background;
+            box-shadow: rgba(200, 200, 202, 0.25) 0 13px 27px -5px, rgba(255, 255, 255, 0.3) 0px 8px 16px -8px;
+            color: $dark-select-item-color;
+        }
+
+        &.opened {
+            display: block;
+        }
+
+        & div {
+            display: block;
+            cursor: pointer;
+            padding: .5rem 1rem;
+            border-bottom: solid 0.0625rem rgba(0, 0, 0, .05);
+
+            &:last-child {
+                border-bottom: none;
+            }
+
+            &:hover {
+                background-color: $select-item-hover-color;
+            }
+
+            &.disabled {
+                color: $select-disabled-item-color;
+                cursor: default;
+                opacity: $select-disabled-item-opacity;
+
+                body.dark-mode & {
+                    color: $dark-select-disabled-item-color;
+                    opacity: $dark-select-disabled-item-opacity;
+                }
+            }
+
+            &.active {
+                color: $select-active-item-color;
+                font-weight: $select-active-item-weight;
+            }
+
+            &.not-found-option {
+                color: $select-not-found-item-color;
+                cursor: text;
+                user-select: text;
+            }
+        }
+    }
+
+    & .dropdown-arrow {
+        max-width: 3rem;
+        width: 20%;
+        height: 2.65rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        align-self: center;
+
+        & div {
+            display: block;
+            width: 0.125rem;
+            height: .75rem;
+            background-color: $select-arrow-color;
+            margin: 0;
+
+            body.dark-mode & {
+                background-color: $dark-select-arrow-color;
+            }
+
+            &:first-child {
+                transform: translateX(.29rem) rotate(45deg);
+            }
+
+            &:last-child {
+                transform: translateX(-.29rem) rotate(-45deg);
+            }
+        }
+    }
+}
+
+// --------------------------------------------------
+// --- SELECT ---
+// --------------------------------------------------

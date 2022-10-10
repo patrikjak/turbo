@@ -1,0 +1,138 @@
+@use "sass:color";
+
+* {
+    outline: none;
+    margin: 0;
+    padding-left: 0;
+    font-family: 'Arial', sans-serif;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #ffffff;
+    transition: 300ms;
+
+    &.dark-mode {
+        background-color: color.scale(#ffffff, $lightness: -90%);
+        color: #ffffff;
+    }
+}
+
+code {
+    font-family: 'Courier New', monospace;
+}
+
+.top-space {
+    margin-top: 1rem !important;
+}
+.top-space-2 {
+    margin-top: 4rem !important;
+}
+.top-space-3 {
+    margin-top: 7rem !important;
+}
+.bottom-space {
+    margin-bottom: 1rem;
+}
+
+.page {
+    display: flex;
+}
+
+.navigation {
+    width: 20%;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #002129;
+    color: #fcfcfc;
+
+    h1 {
+        text-align: center;
+        margin: 15% 20% 0 20%;
+        text-transform: uppercase;
+
+        & + p {
+            text-align: center;
+            font-size: 1.25rem;
+        }
+    }
+
+    .nav-items {
+        margin-top: 20%;
+        height: 50vh;
+
+        .item {
+            margin: 5% 10%;
+            padding: 2% 0;
+
+            a {
+                text-decoration: none;
+                color: #fcfcfc;
+            }
+        }
+    }
+}
+
+.content {
+    width: 80%;
+    position: relative;
+    left: 20%;
+
+    .section {
+        margin: 5%;
+
+        .section-info {
+            margin: 2% 0;
+        }
+
+        h2 {
+            font-size: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: solid 0.0625rem #D4D2D5;
+        }
+
+        &#intro pre {
+            white-space: pre-line;
+        }
+
+        & .smaller-width {
+            width: 30%;
+        }
+
+        .group {
+            display: flex;
+            width: 100%;
+            justify-content: space-between;
+
+            &.group-3 {
+                & .turbo-ui.input {
+                    width: 30%;
+                    margin-top: 0;
+                }
+
+                & .turbo-ui.select {
+                    width: 30%;
+                }
+            }
+        }
+    }
+}
+
+.section-heading {
+    margin: 2rem 0;
+
+    &:first-child {
+        margin-top: 0;
+    }
+}
+
+.color-mode-switch {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: center;
+    position: absolute;
+    bottom: 5%;
+}
