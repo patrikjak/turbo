@@ -292,10 +292,18 @@ body.dark-mode .turbo-ui.toggle input:checked + label:after {
   background-color: #f5f5f5;
   border-radius: #00627a;
 }
+body.dark-mode .turbo-ui.select ::-webkit-scrollbar-track,
+body.dark-mode .turbo-ui.select ::-webkit-scrollbar-track {
+  border-radius: #00627a;
+}
 .turbo-ui.select ::-webkit-scrollbar-thumb,
 .turbo-ui.select ::-webkit-scrollbar-thumb {
   background-color: #00627a;
   border-radius: 0.125rem;
+}
+body.dark-mode .turbo-ui.select ::-webkit-scrollbar-thumb,
+body.dark-mode .turbo-ui.select ::-webkit-scrollbar-thumb {
+  background-color: #00627a;
 }
 .turbo-ui.select label, .turbo-ui.select select {
   display: none;
@@ -309,6 +317,10 @@ body.dark-mode .turbo-ui.toggle input:checked + label:after {
   border: solid 0.0625rem #cccccc;
   background-color: #e8e8e8;
   border-radius: 0.1875rem;
+}
+body.dark-mode .turbo-ui.select .turbo-select {
+  background-color: #e8e8e8;
+  border-color: #cccccc;
 }
 .turbo-ui.select .turbo-select.multiselect {
   height: auto;
@@ -356,6 +368,9 @@ body.dark-mode .turbo-ui.toggle input:checked + label:after {
   line-height: 2.65rem;
   color: #000000;
 }
+body.dark-mode .turbo-ui.select .label {
+  color: #000000;
+}
 .turbo-ui.select .label.selected {
   opacity: 1;
 }
@@ -379,6 +394,10 @@ body.dark-mode .turbo-ui.toggle input:checked + label:after {
   cursor: default;
   margin: 0.5rem 0.8rem 0.5rem 0;
 }
+body.dark-mode .turbo-ui.select .label div.selected-option {
+  background-color: #00627a;
+  color: #ffffff;
+}
 .turbo-ui.select .label div.selected-option.next-row {
   margin-top: 0;
 }
@@ -396,6 +415,9 @@ body.dark-mode .turbo-ui.toggle input:checked + label:after {
   background-color: #ffffff;
   position: absolute;
   right: 0;
+}
+body.dark-mode .turbo-ui.select .label div.remove-button div.remove-line {
+  background-color: #ffffff;
 }
 .turbo-ui.select .label div.remove-button div.remove-line:first-child {
   transform: rotate(45deg) translate(0.3rem, 0.3rem);
@@ -416,8 +438,14 @@ body.dark-mode .turbo-ui.toggle input:checked + label:after {
   opacity: 1;
   color: #000000;
 }
+body.dark-mode .turbo-ui.select .label input::placeholder {
+  color: #000000;
+}
 .turbo-ui.select .label input::-ms-input-placeholder {
   opacity: 1;
+  color: #000000;
+}
+body.dark-mode .turbo-ui.select .label input::-ms-input-placeholder {
   color: #000000;
 }
 .turbo-ui.select .options {
@@ -457,6 +485,9 @@ body.dark-mode .turbo-ui.select .options {
 .turbo-ui.select .options div:hover {
   background-color: #ededed;
 }
+body.dark-mode .turbo-ui.select .options div:hover {
+  background-color: #ededed;
+}
 .turbo-ui.select .options div.disabled {
   color: #000000;
   cursor: default;
@@ -470,10 +501,17 @@ body.dark-mode .turbo-ui.select .options div.disabled {
   color: #000000;
   font-weight: 600;
 }
+body.dark-mode .turbo-ui.select .options div.active {
+  color: #000000;
+  font-weight: 600;
+}
 .turbo-ui.select .options div.not-found-option {
   color: #000000;
   cursor: text;
   user-select: text;
+}
+body.dark-mode .turbo-ui.select .options div.not-found-option {
+  color: #000000;
 }
 .turbo-ui.select .dropdown-arrow {
   max-width: 3rem;

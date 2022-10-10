@@ -440,7 +440,7 @@ $multiselect-selected-background: $brand-blue;
 $multiselect-selected-font-color: #ffffff;
 
 
-$dark-dark-select-background: $light-grey;
+$dark-select-background: $light-grey;
 $dark-select-options-background: #fbfbfb;
 $dark-select-border-color: #cccccc;
 $dark-select-label-color: #000000;
@@ -471,12 +471,20 @@ $dark-multiselect-selected-font-color: #ffffff;
     ::-webkit-scrollbar-track {
         background-color: #f5f5f5;
         border-radius: $select-scrollbar-color;
+
+        body.dark-mode & {
+            border-radius: $dark-select-scrollbar-color;
+        }
     }
 
     ::-webkit-scrollbar-thumb,
     ::-webkit-scrollbar-thumb {
         background-color: $select-scrollbar-color;
         border-radius: .125rem;
+
+        body.dark-mode & {
+            background-color: $dark-select-scrollbar-color;
+        }
     }
 
     label, select {
@@ -492,6 +500,11 @@ $dark-multiselect-selected-font-color: #ffffff;
         border: solid 0.0625rem $select-border-color;
         background-color: $select-background;
         border-radius: 0.1875rem;
+
+        body.dark-mode & {
+            background-color: $dark-select-background;
+            border-color: $dark-select-border-color;
+        }
 
         &.multiselect {
             height: auto;
@@ -549,6 +562,10 @@ $dark-multiselect-selected-font-color: #ffffff;
         line-height: 2.65rem;
         color: $select-label-color;
 
+        body.dark-mode & {
+            color: $dark-select-label-color;
+        }
+
         &.selected {
             opacity: 1;
         }
@@ -574,6 +591,11 @@ $dark-multiselect-selected-font-color: #ffffff;
             cursor: default;
             margin: .5rem .8rem .5rem 0;
 
+            body.dark-mode & {
+                background-color: $dark-multiselect-selected-background;
+                color: $dark-multiselect-selected-font-color;
+            }
+
             &.next-row {
                 margin-top: 0;
             }
@@ -593,6 +615,10 @@ $dark-multiselect-selected-font-color: #ffffff;
                 background-color: $multiselect-selected-font-color;
                 position: absolute;
                 right: 0;
+
+                body.dark-mode & {
+                    background-color: $dark-multiselect-selected-font-color;
+                }
 
                 &:first-child {
                     transform: rotate(45deg) translate(.3rem, .3rem);
@@ -616,11 +642,19 @@ $dark-multiselect-selected-font-color: #ffffff;
             &::placeholder {
                 opacity: 1;
                 color: $select-label-color;
+
+                body.dark-mode & {
+                    color: $dark-select-label-color;
+                }
             }
 
             &::-ms-input-placeholder {
                 opacity: 1;
                 color: $select-label-color;
+
+                body.dark-mode & {
+                    color: $dark-select-label-color;
+                }
             }
         }
     }
@@ -664,6 +698,10 @@ $dark-multiselect-selected-font-color: #ffffff;
 
             &:hover {
                 background-color: $select-item-hover-color;
+
+                body.dark-mode & {
+                    background-color: $dark-select-item-hover-color;
+                }
             }
 
             &.disabled {
@@ -680,12 +718,21 @@ $dark-multiselect-selected-font-color: #ffffff;
             &.active {
                 color: $select-active-item-color;
                 font-weight: $select-active-item-weight;
+
+                body.dark-mode & {
+                    color: $dark-select-active-item-color;
+                    font-weight: $dark-select-active-item-weight;
+                }
             }
 
             &.not-found-option {
                 color: $select-not-found-item-color;
                 cursor: text;
                 user-select: text;
+
+                body.dark-mode & {
+                    color: $dark-select-not-found-item-color;
+                }
             }
         }
     }
