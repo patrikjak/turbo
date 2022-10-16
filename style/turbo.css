@@ -696,6 +696,10 @@ body.dark-mode .turbo-confirmation .confirmation-content {
   background-color: #00627a;
   border-color: #00627a;
 }
+body.dark-mode .turbo-confirmation .confirmation-footer button {
+  background-color: #00627a;
+  border-color: #00627a;
+}
 .turbo-confirmation .confirmation-footer button:last-child {
   margin-right: 2rem;
 }

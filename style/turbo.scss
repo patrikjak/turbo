@@ -972,6 +972,11 @@ $dark-modal-primary-font-color: $brand-white;
             background-color: $modal-primary-background;
             border-color: $modal-primary-border;
 
+            body.dark-mode & {
+                background-color: $dark-modal-primary-background;
+                border-color: $dark-modal-primary-border;
+            }
+
             &:last-child {
                 margin-right: 2rem;
             }
