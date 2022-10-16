@@ -1,6 +1,6 @@
 const Turbo = require('./src/turbo');
 const Select = require('./src/select');
-const Validator= require('./src/validator');
+const Validator = require('./src/validator');
 
 const turboInstance = new Turbo();
 const selectInstance = new Select();
