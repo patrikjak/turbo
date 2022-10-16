@@ -958,6 +958,11 @@ $dark-modal-primary-font-color: $brand-white;
 
     & .confirmation-content {
         min-height: 3rem;
+        color: $modal-heading-font-color;
+
+        body.dark-mode & {
+            color: $dark-modal-heading-font-color;
+        }
     }
 
     & .confirmation-footer {

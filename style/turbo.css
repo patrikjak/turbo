@@ -684,6 +684,10 @@ body.dark-mode .turbo-confirmation .confirmation-footer button.modal-primary {
 }
 .turbo-confirmation .confirmation-content {
   min-height: 3rem;
+  color: #000000;
+}
+body.dark-mode .turbo-confirmation .confirmation-content {
+  color: #000000;
 }
 .turbo-confirmation .confirmation-footer {
   height: 4rem;
