@@ -816,7 +816,8 @@ $dark-modal-primary-background: $brand-blue;
 $dark-modal-primary-border: $brand-blue;
 $dark-modal-primary-font-color: $brand-white;
 
-.turbo-modal {
+.turbo-modal,
+.turbo-confirmation {
     width: 60%;
     height: auto;
     background-color: $modal-background;
@@ -849,20 +850,21 @@ $dark-modal-primary-font-color: $brand-white;
         }
     }
 
-    & .modal-content {
+    & .modal-content,
+    & .confirmation-content {
         min-height: 5rem;
         max-height: 55vh;
         overflow-y: auto;
-        padding: 1% 3%;
-        margin-top: 1%;
-        margin-bottom: 8%;
+        padding: 2% 3%;
+        margin: 1% 0;
     }
 
-    & .modal-footer {
+    & .modal-footer,
+    & .confirmation-footer {
         background-color: $modal-footer-background;
         width: 100%;
         height: 5rem;
-        position: absolute;
+        position: relative;
         bottom: 0;
         display: flex;
         align-items: center;
@@ -911,4 +913,33 @@ $dark-modal-primary-font-color: $brand-white;
 
 // --------------------------------------------------
 // --- END MODAL ---
+// --------------------------------------------------
+
+// --------------------------------------------------
+// CONFIRMATION
+// --------------------------------------------------
+
+.turbo-confirmation {
+    width: 30%;
+
+    & .confirmation-content {
+        min-height: 3rem;
+    }
+
+    & .confirmation-footer {
+        height: 4rem;
+
+        & button {
+            background-color: $modal-primary-background;
+            border-color: $modal-primary-border;
+
+            &:last-child {
+                margin-right: 2rem;
+            }
+        }
+    }
+}
+
+// --------------------------------------------------
+// --- END CONFIRMATION ---
 // --------------------------------------------------

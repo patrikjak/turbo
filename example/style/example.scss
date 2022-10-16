@@ -6,6 +6,7 @@
     padding-left: 0;
     font-family: 'Arial', sans-serif;
     box-sizing: border-box;
+    scroll-behavior: smooth;
 }
 
 body {
@@ -123,7 +124,8 @@ code {
             width: 100%;
             height: 80vh;
 
-            & .turbo-modal {
+            & .turbo-modal,
+            & .turbo-confirmation {
                 position: absolute;
 
                 & .modal-header {
@@ -131,9 +133,8 @@ code {
                     padding: 3%;
                 }
 
-                & .modal-content {
-                    padding: 2% 3%;
-                    margin-bottom: 12%;
+                & .confirmation-content {
+                    padding: 6%;
                 }
             }
         }

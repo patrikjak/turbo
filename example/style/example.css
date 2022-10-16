@@ -4,6 +4,7 @@
   padding-left: 0;
   font-family: "Arial", sans-serif;
   box-sizing: border-box;
+  scroll-behavior: smooth;
 }
 
 body {
@@ -109,16 +110,15 @@ code {
   width: 100%;
   height: 80vh;
 }
-.content .section .overlay .turbo-modal {
+.content .section .overlay .turbo-modal, .content .section .overlay .turbo-confirmation {
   position: absolute;
 }
-.content .section .overlay .turbo-modal .modal-header {
+.content .section .overlay .turbo-modal .modal-header, .content .section .overlay .turbo-confirmation .modal-header {
   font-size: 1rem;
   padding: 3%;
 }
-.content .section .overlay .turbo-modal .modal-content {
-  padding: 2% 3%;
-  margin-bottom: 12%;
+.content .section .overlay .turbo-modal .confirmation-content, .content .section .overlay .turbo-confirmation .confirmation-content {
+  padding: 6%;
 }
 
 .section-heading {
