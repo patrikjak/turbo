@@ -81,7 +81,7 @@ code {
 .content .section .section-info {
   margin: 2% 0;
 }
-.content .section h2 {
+.content .section > h2 {
   font-size: 2rem;
   padding-bottom: 1rem;
   border-bottom: solid 0.0625rem #D4D2D5;
@@ -103,6 +103,22 @@ code {
 }
 .content .section .group.group-3 .turbo-ui.select {
   width: 30%;
+}
+.content .section .overlay {
+  position: relative;
+  width: 100%;
+  height: 80vh;
+}
+.content .section .overlay .turbo-modal {
+  position: absolute;
+}
+.content .section .overlay .turbo-modal .modal-header {
+  font-size: 1rem;
+  padding: 3%;
+}
+.content .section .overlay .turbo-modal .modal-content {
+  padding: 2% 3%;
+  margin-bottom: 12%;
 }
 
 .section-heading {

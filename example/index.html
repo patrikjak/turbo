@@ -326,10 +326,44 @@
         <div class="section" id="modal">
             <h2>Modal</h2>
             <div class="section-info">
-                <p></p>
+                <p>This modal is displayed on the entire screen</p>
+                <p class="top-space"><code>$modal-background</code> - modal background color</p>
+                <p><code>$modal-header-border</code> - color of the modal header bottom border</p>
+                <p><code>$modal-heading-font-color</code> - modal heading font color</p>
+                <p><code>$modal-footer-background</code> - color of the modal footer</p>
+                <p class="top-space"><code>$modal-secondary-border</code> - color of the modal secondary button border</p>
+                <p><code>$modal-secondary-background</code> - background color of the modal secondary button</p>
+                <p><code>$modal-secondary-font-color</code> - font color of the modal secondary button</p>
+                <p class="top-space"><code>$modal-primary-border</code> - color of the modal secondary button border</p>
+                <p><code>$modal-primary-background</code> - background color of the modal secondary button</p>
+                <p><code>$modal-primary-font-color</code> - font color of the modal secondary button</p>
             </div>
             <div class="example">
-
+                <div class="overlay">
+                    <div class="turbo-modal">
+                        <div class="modal-header">
+                            <h2>Create a new product</h2>
+                        </div>
+                        <div class="modal-content">
+                            <div class="turbo-ui input">
+                                <input type="text" name="name" id="name">
+                                <label for="name">Product name</label>
+                            </div>
+                            <div class="turbo-ui input">
+                                <input name="sku" id="sku">
+                                <label for="sku">Product SKU</label>
+                            </div>
+                            <div class="turbo-ui input">
+                                <textarea name="description" id="description"></textarea>
+                                <label for="description">Product description</label>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="modal-secondary">Cancel</button>
+                            <button class="modal-primary">Save</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

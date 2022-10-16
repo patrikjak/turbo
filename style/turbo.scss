@@ -1,5 +1,5 @@
 // --------------------------------------------------
-// GENERAL VARIABLES
+// GENERAL
 // --------------------------------------------------
 
 @use "sass:color";
@@ -17,8 +17,18 @@ $light-grey: #e8e8e8;
 $error: #b3261e;
 $test: blue;
 
+.overlay {
+    display: block;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, .7);
+    top: 0;
+    left: 0;
+}
+
 // --------------------------------------------------
-// --- GENERAL VARIABLES ---
+// --- GENERAL ---
 // --------------------------------------------------
 
 
@@ -671,7 +681,7 @@ $dark-multiselect-selected-font-color: #ffffff;
         z-index: 1000;
         border-bottom-left-radius: .25rem;
         border-bottom-right-radius: .25rem;
-        box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
+        box-shadow: rgba(50, 50, 93, 0.25) 0 13px 27px -5px, rgba(0, 0, 0, 0.3) 0 8px 16px -8px;
         max-height: 15rem;
         overflow-y: auto;
         color: $select-item-color;
@@ -771,4 +781,134 @@ $dark-multiselect-selected-font-color: #ffffff;
 
 // --------------------------------------------------
 // --- SELECT ---
+// --------------------------------------------------
+
+// --------------------------------------------------
+// MODAL
+// --------------------------------------------------
+
+$modal-background: #f5f5f5;
+
+$modal-header-border: $brand-dark-blue;
+$modal-heading-font-color: #000000;
+$modal-footer-background: $light-grey;
+
+$modal-secondary-border: $brand-dark-blue;
+$modal-secondary-background: transparent;
+$modal-secondary-font-color: $brand-dark-blue;
+
+$modal-primary-border: $brand-blue;
+$modal-primary-background: $brand-blue;
+$modal-primary-font-color: $brand-white;
+
+
+$dark-modal-background: #f5f5f5;
+
+$dark-modal-header-border: $brand-dark-blue;
+$dark-modal-heading-font-color: #000000;
+$dark-modal-footer-background: $light-grey;
+
+$dark-modal-secondary-border: $brand-dark-blue;
+$dark-modal-secondary-background: transparent;
+$dark-modal-secondary-font-color: $brand-dark-blue;
+
+$dark-modal-primary-background: $brand-blue;
+$dark-modal-primary-border: $brand-blue;
+$dark-modal-primary-font-color: $brand-white;
+
+.turbo-modal {
+    width: 60%;
+    height: auto;
+    background-color: $modal-background;
+    border-radius: 0.3125rem;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: rgba(100, 100, 111, 0.8) 0 0.4375rem 1.8125rem 0;
+    z-index: 100;
+
+    body.dark-mode & {
+        background-color: $dark-modal-background;
+    }
+
+    & .modal-header {
+        padding: 1% 3%;
+        border-bottom: solid 0.125rem $modal-header-border;
+
+        body.dark-mode & {
+            border-color: $dark-modal-header-border;
+        }
+
+        & h2 {
+            color: $modal-heading-font-color;
+
+            body.dark-mode & {
+                color: $dark-modal-heading-font-color;
+            }
+        }
+    }
+
+    & .modal-content {
+        min-height: 5rem;
+        max-height: 55vh;
+        overflow-y: auto;
+        padding: 1% 3%;
+        margin-top: 1%;
+        margin-bottom: 8%;
+    }
+
+    & .modal-footer {
+        background-color: $modal-footer-background;
+        width: 100%;
+        height: 5rem;
+        position: absolute;
+        bottom: 0;
+        display: flex;
+        align-items: center;
+        text-align: right;
+        justify-content: right;
+
+        body.dark-mode & {
+            background-color: $dark-modal-footer-background;
+        }
+
+        & button {
+            margin-right: 3rem;
+            width: 8rem;
+            user-select: none;
+
+            &.modal-secondary {
+                background-color: $modal-secondary-background;
+                border: solid 0.0625rem $modal-secondary-border;
+                color: $modal-secondary-font-color;
+
+                body.dark-mode & {
+                    background-color: $dark-modal-secondary-background;
+                    border-color: $dark-modal-secondary-border;
+                    color: $dark-modal-secondary-font-color;
+                }
+            }
+
+            &.modal-primary {
+                background-color: $modal-primary-background;
+                border-color: $modal-primary-border;
+                color: $modal-primary-font-color;
+
+                body.dark-mode & {
+                    background-color: $dark-modal-primary-background;
+                    border-color: $dark-modal-primary-border;
+                    color: $dark-modal-primary-font-color;
+                }
+            }
+
+            &:last-child {
+                margin-right: 6rem;
+            }
+        }
+    }
+}
+
+// --------------------------------------------------
+// --- END MODAL ---
 // --------------------------------------------------
