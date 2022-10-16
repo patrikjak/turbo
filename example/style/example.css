@@ -128,6 +128,11 @@ code {
   top: 0;
   left: 0;
 }
+.content .section .loader {
+  position: relative;
+  top: 2rem;
+  left: 2rem;
+}
 
 .section-heading {
   margin: 2rem 0;

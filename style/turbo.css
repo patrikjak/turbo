@@ -793,4 +793,53 @@ body.dark-mode .turbo-notification.error h2 {
   height: 0.125rem;
 }
 
+.loader {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 5rem;
+  height: 5rem;
+  z-index: 99999;
+  transform: translate(-50%, -50%);
+}
+.loader div {
+  position: absolute;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  animation: loader 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  margin: 0.5rem;
+  border: solid 0.5rem;
+}
+.loader div:nth-child(1) {
+  border-color: #00627a transparent transparent transparent;
+  animation-delay: -0.45s;
+}
+body.dark-mode .loader div:nth-child(1) {
+  border-color: #f3f2fa transparent transparent transparent;
+}
+.loader div:nth-child(2) {
+  border-color: #99C24d transparent transparent transparent;
+  animation-delay: -0.3s;
+}
+body.dark-mode .loader div:nth-child(2) {
+  border-color: #99C24d transparent transparent transparent;
+}
+.loader div:nth-child(3) {
+  border-color: #99C24d transparent transparent transparent;
+  animation-delay: -0.15s;
+}
+body.dark-mode .loader div:nth-child(3) {
+  border-color: #99C24d transparent transparent transparent;
+}
+
+@keyframes loader {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 /*# sourceMappingURL=turbo.css.map */
