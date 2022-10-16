@@ -105,6 +105,9 @@ code {
 .content .section .group.group-3 .turbo-ui.select {
   width: 30%;
 }
+.content .section .group.group-4 {
+  gap: 2rem;
+}
 .content .section .overlay {
   position: relative;
   width: 100%;
@@ -119,6 +122,11 @@ code {
 }
 .content .section .overlay .turbo-modal .confirmation-content, .content .section .overlay .turbo-confirmation .confirmation-content {
   padding: 6%;
+}
+.content .section .turbo-notification {
+  position: relative;
+  top: 0;
+  left: 0;
 }
 
 .section-heading {

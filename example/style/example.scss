@@ -117,6 +117,10 @@ code {
                     width: 30%;
                 }
             }
+
+            &.group-4 {
+                gap: 2rem;
+            }
         }
         
         .overlay {
@@ -137,6 +141,12 @@ code {
                     padding: 6%;
                 }
             }
+        }
+
+        & .turbo-notification {
+            position: relative;
+            top: 0;
+            left: 0;
         }
     }
 }

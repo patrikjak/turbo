@@ -14,8 +14,11 @@ $brand-white: #f3f2fa;
 // GENERAL COLORS
 $grey: #bdbdbd;
 $light-grey: #e8e8e8;
+
+$success: #1dbf22;
+$info: $brand-blue;
+$warning: #fa8611;
 $error: #b3261e;
-$test: blue;
 
 .overlay {
     display: block;
@@ -25,6 +28,37 @@ $test: blue;
     background-color: rgba(0, 0, 0, .7);
     top: 0;
     left: 0;
+}
+
+.close-button {
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: 0;
+    position: relative;
+    width: 2.5rem;
+    height: 2.5rem;
+    cursor: pointer;
+
+    &:before,
+    &:after {
+        content: "";
+        position: absolute;
+        top: .75rem;
+        left: 0;
+        right: 0;
+        height: .25rem;
+        background: #000000;
+        border-radius: 0.25rem;
+    }
+
+    &:before {
+        transform: rotate(45deg);
+    }
+
+    &:after {
+        transform: rotate(-45deg);
+    }
 }
 
 // --------------------------------------------------
@@ -942,4 +976,159 @@ $dark-modal-primary-font-color: $brand-white;
 
 // --------------------------------------------------
 // --- END CONFIRMATION ---
+// --------------------------------------------------
+
+// --------------------------------------------------
+// NOTIFICATION
+// --------------------------------------------------
+
+$notification-background: #f5f5f5;
+$notification-font-color: #000000;
+
+$notification-info-color: $info;
+$notification-success-color: $success;
+$notification-warning-color: $warning;
+$notification-error-color: $error;
+
+$dark-notification-background: $light-grey;
+$dark-notification-font-color: #000000;
+
+$dark-notification-info-color: $info;
+$dark-notification-success-color: $success;
+$dark-notification-warning-color: $warning;
+$dark-notification-error-color: $error;
+
+.turbo-notification {
+    position: fixed;
+    top: 5%;
+    right: 3%;
+    background-color: $notification-background;
+    width: 40vh;
+    border-radius: 0.3125rem;
+    display: flex;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    z-index: 99999;
+    color: $notification-font-color;
+
+    body.dark-mode & {
+        background-color: $dark-notification-background;
+        color: $dark-notification-font-color;
+    }
+
+    & h2 {
+        padding: 7% 15%;
+        border-bottom: solid 0.125rem $notification-info-color;
+        margin: 0;
+        font-weight: inherit;
+
+        body.dark-mode & {
+            border-color: $dark-notification-info-color;
+        }
+    }
+
+    & p {
+        padding: 5% 10%;
+    }
+
+    & .notification-level {
+        width: 2%;
+        background-color: $notification-info-color;
+
+        body.dark-mode & {
+            background-color: $dark-notification-info-color;
+        }
+    }
+
+    &.info {
+        & .notification-level {
+            background-color: $notification-info-color;
+
+            body.dark-mode & {
+                background-color: $dark-notification-info-color;
+            }
+        }
+
+        & h2 {
+            border-bottom-color: $notification-info-color;
+
+            body.dark-mode & {
+                border-bottom-color: $dark-notification-info-color;
+            }
+        }
+    }
+
+    &.success {
+        & .notification-level {
+            background-color: $notification-success-color;
+
+            body.dark-mode & {
+                background-color: $dark-notification-success-color;
+            }
+        }
+
+        & h2 {
+            border-bottom-color: $notification-success-color;
+
+            body.dark-mode & {
+                border-bottom-color: $dark-notification-success-color;
+            }
+        }
+    }
+
+    &.warning {
+        & .notification-level {
+            background-color: $notification-warning-color;
+
+            body.dark-mode & {
+                background-color: $dark-notification-warning-color;
+            }
+        }
+
+        & h2 {
+            border-bottom-color: $notification-warning-color;
+
+            body.dark-mode & {
+                border-bottom-color: $dark-notification-warning-color;
+            }
+        }
+    }
+
+    &.error {
+        & .notification-level {
+            background-color: $notification-error-color;
+
+            body.dark-mode & {
+                background-color: $dark-notification-error-color;
+            }
+        }
+
+        & h2 {
+            border-bottom-color: $notification-error-color;
+
+            body.dark-mode & {
+                border-bottom-color: $dark-notification-error-color;
+            }
+        }
+    }
+
+    & .notification-content {
+        width: 98%;
+    }
+
+    & .close-button {
+        width: 1.5rem;
+        height: 1.5rem;
+        position: absolute;
+        top: 10%;
+        right: 5%;
+
+        &:before,
+        &:after {
+            height: .125rem;
+        }
+    }
+}
+
+// --------------------------------------------------
+// --- END NOTIFICATION ---
 // --------------------------------------------------

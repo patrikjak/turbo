@@ -8,6 +8,33 @@
   left: 0;
 }
 
+.close-button {
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: 0;
+  position: relative;
+  width: 2.5rem;
+  height: 2.5rem;
+  cursor: pointer;
+}
+.close-button:before, .close-button:after {
+  content: "";
+  position: absolute;
+  top: 0.75rem;
+  left: 0;
+  right: 0;
+  height: 0.25rem;
+  background: #000000;
+  border-radius: 0.25rem;
+}
+.close-button:before {
+  transform: rotate(45deg);
+}
+.close-button:after {
+  transform: rotate(-45deg);
+}
+
 button {
   padding: 0.5rem 2rem;
   background-color: #99C24d;
@@ -667,6 +694,103 @@ body.dark-mode .turbo-confirmation .confirmation-footer button.modal-primary {
 }
 .turbo-confirmation .confirmation-footer button:last-child {
   margin-right: 2rem;
+}
+
+.turbo-notification {
+  position: fixed;
+  top: 5%;
+  right: 3%;
+  background-color: #f5f5f5;
+  width: 40vh;
+  border-radius: 0.3125rem;
+  display: flex;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  z-index: 99999;
+  color: #000000;
+}
+body.dark-mode .turbo-notification {
+  background-color: #e8e8e8;
+  color: #000000;
+}
+.turbo-notification h2 {
+  padding: 7% 15%;
+  border-bottom: solid 0.125rem #00627a;
+  margin: 0;
+  font-weight: inherit;
+}
+body.dark-mode .turbo-notification h2 {
+  border-color: #00627a;
+}
+.turbo-notification p {
+  padding: 5% 10%;
+}
+.turbo-notification .notification-level {
+  width: 2%;
+  background-color: #00627a;
+}
+body.dark-mode .turbo-notification .notification-level {
+  background-color: #00627a;
+}
+.turbo-notification.info .notification-level {
+  background-color: #00627a;
+}
+body.dark-mode .turbo-notification.info .notification-level {
+  background-color: #00627a;
+}
+.turbo-notification.info h2 {
+  border-bottom-color: #00627a;
+}
+body.dark-mode .turbo-notification.info h2 {
+  border-bottom-color: #00627a;
+}
+.turbo-notification.success .notification-level {
+  background-color: #1dbf22;
+}
+body.dark-mode .turbo-notification.success .notification-level {
+  background-color: #1dbf22;
+}
+.turbo-notification.success h2 {
+  border-bottom-color: #1dbf22;
+}
+body.dark-mode .turbo-notification.success h2 {
+  border-bottom-color: #1dbf22;
+}
+.turbo-notification.warning .notification-level {
+  background-color: #fa8611;
+}
+body.dark-mode .turbo-notification.warning .notification-level {
+  background-color: #fa8611;
+}
+.turbo-notification.warning h2 {
+  border-bottom-color: #fa8611;
+}
+body.dark-mode .turbo-notification.warning h2 {
+  border-bottom-color: #fa8611;
+}
+.turbo-notification.error .notification-level {
+  background-color: #b3261e;
+}
+body.dark-mode .turbo-notification.error .notification-level {
+  background-color: #b3261e;
+}
+.turbo-notification.error h2 {
+  border-bottom-color: #b3261e;
+}
+body.dark-mode .turbo-notification.error h2 {
+  border-bottom-color: #b3261e;
+}
+.turbo-notification .notification-content {
+  width: 98%;
+}
+.turbo-notification .close-button {
+  width: 1.5rem;
+  height: 1.5rem;
+  position: absolute;
+  top: 10%;
+  right: 5%;
+}
+.turbo-notification .close-button:before, .turbo-notification .close-button:after {
+  height: 0.125rem;
 }
 
 /*# sourceMappingURL=turbo.css.map */
