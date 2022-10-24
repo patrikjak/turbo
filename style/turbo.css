@@ -342,9 +342,6 @@ body.dark-mode .turbo-ui.select ::-webkit-scrollbar-thumb,
 body.dark-mode .turbo-ui.select ::-webkit-scrollbar-thumb {
   background-color: #00627a;
 }
-.turbo-ui.select label, .turbo-ui.select select {
-  display: none;
-}
 .turbo-ui.select .turbo-select {
   min-width: 10rem;
   max-width: 100%;
