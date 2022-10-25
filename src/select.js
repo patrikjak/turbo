@@ -14,6 +14,9 @@ class Select {
         this.beautySpace = 10; // multiselect options || input
     }
 
+    /**
+     * @param parent
+     */
     initSelect(parent = document) {
         const selects = parent.querySelectorAll('.turbo-ui.select');
 
@@ -31,6 +34,10 @@ class Select {
         }
     }
 
+    /**
+     * @param turboSelectWrapper
+     * @param turboSelectId
+     */
     generateTurboSelect(turboSelectWrapper, turboSelectId) {
         const realSelect = turboSelectWrapper.querySelector('select');
         const realLabel = turboSelectWrapper.querySelector('label');
@@ -65,6 +72,14 @@ class Select {
         this.updateLabel(turboSelectId);
     }
 
+    /**
+     * @param turboSelectId
+     * @param selectOptions
+     * @param labelText
+     * @param multiselect
+     * @param searchable
+     * @return {{arrow: *, optionsWrapper: *, selectionWrapper: *, label: *, turboSelectElement: *}}
+     */
     generateMainElements(turboSelectId, selectOptions, labelText, multiselect = false, searchable = false) {
         const turboSelectClasses = ['turbo-select'];
 
@@ -110,6 +125,12 @@ class Select {
         };
     }
 
+    /**
+     * @param labelText
+     * @param searchable
+     * @param onlyInput
+     * @return {*}
+     */
     generateLabel(labelText, searchable, onlyInput = false) {
         const labelClasses = ['label'];
 
@@ -138,6 +159,11 @@ class Select {
         return label;
     }
 
+    /**
+     * @param selectId
+     * @param additionalOption
+     * @return {{}|{notFoundOption: boolean, attributes: {dataset: {value: (string|*)}, class: string[]}, disabled: boolean, text: (string|*), value: (string|*), allSelectedOption: boolean}}
+     */
     generateAdditionalOption(selectId, additionalOption = 'notFound') {
         if (['notFound', 'allSelected'].includes(additionalOption)) {
             const value = additionalOption === 'notFound' ? this.selects[selectId].settings.notFoundOptionValue : this.selects[selectId].settings.allOptionsSelectedOptionValue;
@@ -168,6 +194,12 @@ class Select {
         return {};
     }
 
+    /**
+     * @param text
+     * @param value
+     * @param nextRow
+     * @return {*}
+     */
     generateSelectedOption(text, value, nextRow = false) {
         const optionClasses = [
             'selected-option',
@@ -199,6 +231,11 @@ class Select {
         return selectedOption;
     }
 
+    /**
+     * @param arrayOfRealOptions
+     * @param customSelectSettings
+     * @return {*[]}
+     */
     getOptionsInfo(arrayOfRealOptions, customSelectSettings) {
         const optionsInfo = [];
 
@@ -244,6 +281,10 @@ class Select {
         return optionsInfo;
     }
 
+    /**
+     * @param options
+     * @return {*[]}
+     */
     generateOptions(options) {
         const arrayOfOptions = [];
 
@@ -256,12 +297,23 @@ class Select {
         return arrayOfOptions;
     }
 
+    /**
+     * @param wrapper
+     * @param arrayOfOptions
+     */
     showOptionsInWrapper(wrapper, arrayOfOptions) {
         for (let i = 0; i < arrayOfOptions.length; i++) {
             this.turbo.showElement(arrayOfOptions[i], wrapper, 'append', 'block', {});
         }
     }
 
+    /**
+     * @param options
+     * @param id
+     * @param defaultLabel
+     * @param searchable
+     * @param multiselect
+     */
     createInstance(options, id, defaultLabel, searchable, multiselect) {
         const select = document.querySelector(`#${id}`);
         const turboSelectWrapper = select.closest('.turbo-ui.select');
@@ -301,14 +353,25 @@ class Select {
         }
     }
 
+    /**
+     * @param selectId
+     * @return {*}
+     */
     isSearchable(selectId) {
         return this.selects[selectId].searchable;
     }
 
+    /**
+     * @param selectId
+     * @return {*}
+     */
     isMultiselect(selectId) {
         return this.selects[selectId].multiselect;
     }
 
+    /**
+     * @param turboSelectWrapper
+     */
     bindSelectActions(turboSelectWrapper) {
         const selectWrapper = turboSelectWrapper.querySelector('.turbo-select');
 
@@ -337,6 +400,10 @@ class Select {
         }
     }
 
+    /**
+     * @param options
+     * @param selectId
+     */
     bindSelection(options, selectId) {
         for (let i = 0; i < options.length; i++) {
             const option = options[i];
@@ -348,6 +415,10 @@ class Select {
         }
     }
 
+    /**
+     * @param option
+     * @param selectId
+     */
     bindOptionDelete(option, selectId) {
         const deleteButton = option.querySelector('.remove-button');
 
@@ -362,6 +433,10 @@ class Select {
         });
     }
 
+    /**
+     * @param turboSelectWrapper
+     * @param selectId
+     */
     toggleOptions(turboSelectWrapper, selectId) {
         const options = turboSelectWrapper.querySelector('.options');
         const open = !options.classList.contains('opened');
@@ -417,6 +492,10 @@ class Select {
         }
     }
 
+    /**
+     * @param options
+     * @param selectId
+     */
     openOptions(options, selectId) {
         const searchable = this.isSearchable(selectId);
         const multiselect = this.isMultiselect(selectId);
@@ -443,6 +522,9 @@ class Select {
         this.bindCloseOptionsFromOutside(options, selectId);
     }
 
+    /**
+     * @param selectId
+     */
     setOptionWrapperPosition(selectId) {
         const turboSelectWrapper = this.selects[selectId].wrapper;
         const optionWrapper = turboSelectWrapper.querySelector('.options-wrapper');
@@ -454,6 +536,9 @@ class Select {
         options.style.top = (selectWrapperHeight - optionWrapperMinHeight) + 'px';
     }
 
+    /**
+     * @param options
+     */
     closeOptions(options) {
         options.classList.remove('opened');
         this.turbo.toggleAnimationClass(options, 'animation-slide-out-top', this.animationSettings.duration);
@@ -463,6 +548,10 @@ class Select {
         }, this.animationSettings.duration);
     }
 
+    /**
+     * @param options
+     * @param selectId
+     */
     bindCloseOptionsFromOutside(options, selectId) {
         const _this = this;
 
@@ -492,17 +581,28 @@ class Select {
         });
     }
 
+    /**
+     * @param selectId
+     * @return {boolean}
+     */
     shouldSelectFirstOption(selectId) {
         if (this.selects[selectId].options.length === 1 && !this.areOptionsNotFound(selectId) && this.selects[selectId].selectedOption === null) {
             return true;
         }
     }
 
+    /**
+     * @param selectId
+     * @return {boolean}
+     */
     areOptionsNotFound(selectId) {
         const firstOptionValue = this.selects[selectId].options[0].value;
         return !!this.getOptionInfoByValue(selectId, firstOptionValue)?.notFoundOption;
     }
 
+    /**
+     * @param selectId
+     */
     reselectOption(selectId) {
         const selectedOption = this.selects[selectId].selectedOption;
         const selectedValue = selectedOption?.value;
@@ -518,6 +618,9 @@ class Select {
         }
     }
 
+    /**
+     * @param selectId
+     */
     updateSelectedElement(selectId) {
         const selectedValue = this.selects[selectId].selectedOption?.value;
 
@@ -526,6 +629,11 @@ class Select {
         }
     }
 
+    /**
+     * @param option
+     * @param selectId
+     * @param triggerChange
+     */
     selectOption(option, selectId, triggerChange = true) {
         const turboSelectWrapper = this.selects[selectId].wrapper;
         const realSelect = turboSelectWrapper.closest('.turbo-ui.select').querySelector('select');
@@ -598,6 +706,10 @@ class Select {
         }
     }
 
+    /**
+     * @param selectId
+     * @param value
+     */
     selectRealOption(selectId, value) {
         const turboSelectWrapper = this.selects[selectId].wrapper.closest('.turbo-ui.select');
         const realSelect = turboSelectWrapper.querySelector('select');
@@ -628,6 +740,9 @@ class Select {
         this.deleteAllSelectedOption(selectId);
     }
 
+    /**
+     * @param selectId
+     */
     deleteAllSelectedOption(selectId) {
         const options = this.selects[selectId].options;
         let allSelectedOptionIndex = false;
@@ -647,6 +762,9 @@ class Select {
         this.deleteAllSelectedOptionElement(selectId);
     }
 
+    /**
+     * @param selectId
+     */
     deleteAllSelectedOptionElement(selectId) {
         for (const optionElement of this.selects[selectId].wrapper.querySelectorAll('.options div')) {
             if (this.turbo.getData(optionElement, 'value') === this.selects[selectId].settings.allOptionsSelectedOptionValue) {
@@ -685,6 +803,9 @@ class Select {
         this.resetOptions(selectId, this.selects[selectId].options);
     }
 
+    /**
+     * @param selectId
+     */
     sortOptionsByDefault(selectId) {
         const defaultOptions = [...this.selects[selectId].defaultOptions];
         const optionsOrder = {};
@@ -719,6 +840,11 @@ class Select {
         }
     }
 
+    /**
+     * @param option
+     * @param selectId
+     * @return {number}
+     */
     getDefaultOptionIndex(option, selectId) {
         for (let i = 0; i < this.selects[selectId].defaultOptions.length; i++) {
             if (option === this.selects[selectId].defaultOptions[i].value) {
@@ -729,6 +855,9 @@ class Select {
         return 0;
     }
 
+    /**
+     * @param selectId
+     */
     resetAvailableOptions(selectId) {
         const turboSelectWrapper = this.selects[selectId].wrapper;
         const optionsWrapper = turboSelectWrapper.querySelector('.options');
@@ -781,6 +910,10 @@ class Select {
         this.setOptionWrapperPosition(selectId);
     }
 
+    /**
+     * @param wrapper
+     * @return {number}
+     */
     getUsableOptionWrapperWidth(wrapper) {
         const wrapperWidth = parseFloat(this.turbo.getCss(wrapper, 'width'));
         const wrapperPaddings = parseFloat(this.turbo.getCss(wrapper, 'padding-right')) + parseFloat(this.turbo.getCss(wrapper, 'padding-left'));
@@ -788,6 +921,10 @@ class Select {
         return wrapperWidth - (wrapperPaddings - this.beautySpace);
     }
 
+    /**
+     * @param element
+     * @return {number}
+     */
     getElementUsedWidth(element) {
         const elementWidth = parseFloat(this.turbo.getCss(element, 'width'));
         const elementMargins = parseFloat(this.turbo.getCss(element, 'margin-right')) + parseFloat(this.turbo.getCss(element, 'margin-left'));
@@ -795,10 +932,19 @@ class Select {
         return elementWidth + elementMargins;
     }
 
+    /**
+     * @param wrapperUsableWidth
+     * @param optionsSum
+     * @return {boolean}
+     */
     mustBePlacedBelowFirstRow(wrapperUsableWidth, optionsSum) {
         return wrapperUsableWidth < optionsSum;
     }
 
+    /**
+     * @param selectId
+     * @param option
+     */
     hideSelectedOption(selectId, option) {
         const optionValue = this.turbo.getData(option, 'value');
 
@@ -831,6 +977,10 @@ class Select {
         }
     }
 
+    /**
+     * @param selectId
+     * @param option
+     */
     makeOptionDisabled(selectId, option) {
         const optionValue = this.turbo.getData(option, 'value');
         option.classList.add('disabled');
@@ -843,6 +993,9 @@ class Select {
         }
     }
 
+    /**
+     * @param selectId
+     */
     addAllSelectedOption(selectId) {
         const option = this.generateAdditionalOption(selectId, 'allSelected');
         const optionElement = this.generateOptions([option]);
@@ -854,6 +1007,9 @@ class Select {
         this.selects[selectId].options.push(option);
     }
 
+    /**
+     * @param selectId
+     */
     unsetSelected(selectId) {
         const multiselect = this.isMultiselect(selectId);
 
@@ -873,6 +1029,11 @@ class Select {
         }
     }
 
+    /**
+     * @param option
+     * @param selectId
+     * @return {boolean}
+     */
     canSelectOption(option, selectId) {
         let selectedValue = option;
 
@@ -909,6 +1070,11 @@ class Select {
         return true;
     }
 
+    /**
+     * @param selectId
+     * @param value
+     * @return {{notFoundOption: boolean}|*}
+     */
     getOptionInfoByValue(selectId, value) {
         if (value === this.selects[selectId].settings.notFoundOptionValue) {
             return {
@@ -925,6 +1091,11 @@ class Select {
         }
     }
 
+    /**
+     * @param selectId
+     * @param value
+     * @return {boolean}
+     */
     isSelected(selectId, value) {
         if (this.isMultiselect(selectId)) {
             for (const selectedOption of this.selects[selectId].selectedOption) {
@@ -937,6 +1108,11 @@ class Select {
         return this.selects[selectId].selectedOption?.value === value;
     }
 
+    /**
+     * @param optionsWrapper
+     * @param label
+     * @param selectId
+     */
     resetSelect(optionsWrapper, label, selectId) {
         const options = optionsWrapper.querySelectorAll('div');
         const searchable = this.isSearchable(selectId);
@@ -959,6 +1135,10 @@ class Select {
         this.resetOptions(selectId);
     }
 
+    /**
+     * @param selectId
+     * @param options
+     */
     resetOptions(selectId, options = {}) {
         const turboSelectWrapper = this.selects[selectId].wrapper;
         const optionsWrapper = turboSelectWrapper.querySelector('.options');
@@ -985,11 +1165,18 @@ class Select {
         this.selects[selectId].options = [...newOptionsData];
     }
 
+    /**
+     * @param select
+     */
     triggerChangeEvent(select) {
         const event = new Event('change');
         select.dispatchEvent(event);
     }
 
+    /**
+     * @param searchInput
+     * @param selectId
+     */
     bindFiltering(searchInput, selectId) {
         const options = searchInput.closest('.options-wrapper').querySelector('.options');
 
@@ -1001,6 +1188,11 @@ class Select {
         });
     }
 
+    /**
+     * @param searchFor
+     * @param selectId
+     * @return {*[]|*}
+     */
     filterOptions(searchFor, selectId) {
         const options = this.isMultiselect(selectId) ? this.selectableOptions(selectId) : this.selects[selectId].defaultOptions;
         let filtered = [];
@@ -1029,7 +1221,11 @@ class Select {
         return filtered;
     }
 
-    // selectedOptions \ defaultOptions
+    /**
+     * selectedOptions \ defaultOptions
+     * @param selectId
+     * @return {*[]}
+     */
     selectableOptions(selectId) {
         const notSearchableOptionValues = [];
         const forSearching = [];
@@ -1047,6 +1243,11 @@ class Select {
         return forSearching;
     }
 
+    /**
+     * @param options
+     * @param arrayOfNewOptions
+     * @param selectId
+     */
     replaceOptions(options, arrayOfNewOptions, selectId) {
         // we must have correct classes
         arrayOfNewOptions = this.activateSelectedOptions(selectId, arrayOfNewOptions);
@@ -1070,6 +1271,11 @@ class Select {
         this.bindSelection(optionsElements, selectId);
     }
 
+    /**
+     * @param selectId
+     * @param options
+     * @return {*}
+     */
     activateSelectedOptions(selectId, options) {
         for (const option of options) {
             const newClasses = [...option.attributes.class];

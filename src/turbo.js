@@ -45,7 +45,7 @@ class Turbo {
                     hideSelected: true,
                     hideOptionsAfterSelect: false,
                     autoSelectFirstOption: false,
-                }
+                },
             }
         };
     }
@@ -606,6 +606,11 @@ class Turbo {
         element.classList.add(newAnimationClass);
     }
 
+    /**
+     * @param form
+     * @param except
+     * @return {{}}
+     */
     collectFormData(form, except = ['_method', '_token']) {
         form = this.beNode(form);
 
@@ -626,6 +631,11 @@ class Turbo {
         return collectedData;
     }
 
+    /**
+     * @param inputs
+     * @param except
+     * @return {{}}
+     */
     getDataFromInputs(inputs, except) {
         let usedCheckboxValues = {};
         let data = {};
@@ -676,6 +686,11 @@ class Turbo {
         return data;
     }
 
+    /**
+     * @param selects
+     * @param except
+     * @return {{}}
+     */
     getDataFromSelects(selects, except) {
         let data = {};
 
@@ -701,6 +716,11 @@ class Turbo {
         return data;
     }
 
+    /**
+     * @param textareas
+     * @param except
+     * @return {{}}
+     */
     getDataFromTextareas(textareas, except) {
         let data = {};
 
