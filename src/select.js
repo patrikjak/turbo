@@ -14,8 +14,8 @@ class Select {
         this.beautySpace = 10; // multiselect options || input
     }
 
-    initSelects() {
-        const selects = document.querySelectorAll('.turbo-ui.select');
+    initSelect(parent = document) {
+        const selects = parent.querySelectorAll('.turbo-ui.select');
 
         if (selects) {
             for (let i = 0; i < selects.length; i++) {
@@ -42,8 +42,9 @@ class Select {
         const selectOptions = {
             searchable: searchable,
             multiselect: multiselect,
-        }
-        const mainElements = this.generateMainElements(turboSelectId, selectOptions, realLabel.textContent, multiselect, searchable);
+        };
+        const labelText = realLabel ? realLabel.textContent : '';
+        const mainElements = this.generateMainElements(turboSelectId, selectOptions, labelText, multiselect, searchable);
         const defaultOptions = this.getOptionsInfo(options, customSettings);
         const generatedOptions = this.generateOptions(defaultOptions);
 
@@ -54,10 +55,14 @@ class Select {
         this.turbo.showElement(mainElements.selectionWrapper, mainElements.turboSelectElement, 'append', 'flex', {});
         this.turbo.showElement(mainElements.arrow, mainElements.turboSelectElement, 'append', 'flex', {});
 
+        realSelect.style.display = 'none';
+
         // final select
         this.turbo.showElement(mainElements.turboSelectElement, turboSelectWrapper, 'append', 'flex', {});
 
-        this.createInstance(defaultOptions, turboSelectId, (mainElements.label ? realLabel.textContent : null), searchable, multiselect);
+        this.createInstance(defaultOptions, turboSelectId, (mainElements.label ? labelText : null), searchable, multiselect);
+
+        this.updateLabel(turboSelectId);
     }
 
     generateMainElements(turboSelectId, selectOptions, labelText, multiselect = false, searchable = false) {
@@ -261,6 +266,8 @@ class Select {
         const select = document.querySelector(`#${id}`);
         const turboSelectWrapper = select.closest('.turbo-ui.select');
         const wrapperId = turboSelectWrapper.getAttribute('id');
+        const customSelectSettings = this.custom[wrapperId]?.settings;
+        const defaultSettings = this.turbo.settings.select;
 
         this.selects[id] = {
             id: id,
@@ -269,12 +276,13 @@ class Select {
             defaultOptions: options,
             options: options,
             settings: {
-                searchAlsoValue: wrapperId && typeof this.custom[wrapperId]?.settings?.searchAlsoValue !== 'undefined' ? this.custom[wrapperId].settings.searchAlsoValue : this.turbo.settings.select.searchAlsoValue,
-                notFoundOptionValue: wrapperId && typeof this.custom[wrapperId]?.settings?.notFoundOptionValue !== 'undefined' ? this.custom[wrapperId].settings.notFoundOptionValue : this.turbo.settings.select.notFoundOptionValue,
-                allOptionsSelectedOptionValue: wrapperId && typeof this.custom[wrapperId]?.settings?.allOptionsSelectedOptionValue !== 'undefined' ? this.custom[wrapperId].settings.allOptionsSelectedOptionValue : this.turbo.settings.select.allOptionsSelectedOptionValue,
-                hideDisabledOptions: wrapperId && typeof this.custom[wrapperId]?.settings?.hideDisabledOptions !== 'undefined' ? this.custom[wrapperId].settings.hideDisabledOptions : this.turbo.settings.select.hideDisabledOptions,
+                searchAlsoValue: wrapperId && typeof customSelectSettings?.searchAlsoValue !== 'undefined' ? customSelectSettings.searchAlsoValue : defaultSettings.searchAlsoValue,
+                notFoundOptionValue: wrapperId && typeof customSelectSettings?.notFoundOptionValue !== 'undefined' ? customSelectSettings.notFoundOptionValue : defaultSettings.notFoundOptionValue,
+                allOptionsSelectedOptionValue: wrapperId && typeof customSelectSettings?.allOptionsSelectedOptionValue !== 'undefined' ? customSelectSettings.allOptionsSelectedOptionValue : defaultSettings.allOptionsSelectedOptionValue,
+                autoSelect: wrapperId && typeof customSelectSettings?.autoSelect !== 'undefined' ? customSelectSettings.autoSelect : defaultSettings.autoSelect,
+                customLabel: wrapperId && typeof customSelectSettings?.customLabel !== 'undefined' ? customSelectSettings.customLabel : defaultSettings.customLabel,
             },
-            defaultLabel: defaultLabel,
+            label: defaultLabel,
             selectedOption: (multiselect ? [] : null),
             searchable: searchable,
             multiselect: multiselect,
@@ -367,6 +375,45 @@ class Select {
         } else {
             this.reselectOption(selectId);
             this.closeOptions(options);
+        }
+    }
+
+    /**
+     * select the first available option and update label
+     * only for not multiselect
+     * @param selectId
+     */
+    updateLabel(selectId) {
+        const selectInfo = this.selects[selectId];
+        const originalLabel = selectInfo.wrapper.closest('.turbo-ui.select').querySelector('label');
+        const label = selectInfo.wrapper.querySelector('.label');
+
+        for (const option of selectInfo.options) {
+            if (this.canSelectOption(option, selectId)) {
+                if (!originalLabel) {
+                    if (selectInfo.searchable) {
+                        label.querySelector('input').placeholder = option.text;
+                    } else {
+                        label.textContent = option.text;
+                    }
+                }
+
+                if (!selectInfo.multiselect && selectInfo.settings.autoSelect) {
+                    this.selectOption(option, selectId, false);
+                }
+
+                break;
+            }
+        }
+
+        if (!selectInfo.settings.autoSelect && selectInfo.settings.customLabel !== '') {
+            const customLabel = selectInfo.settings.customLabel;
+
+            if (selectInfo.searchable) {
+                label.querySelector('input').placeholder = customLabel;
+            } else {
+                label.textContent = customLabel;
+            }
         }
     }
 
@@ -572,7 +619,7 @@ class Select {
 
         if (this.turbo.isEmpty(this.selects[selectId].selectedOption)) {
             const turboSelectWrapper = this.selects[selectId].wrapper;
-            const newLabel = this.generateLabel(this.selects[selectId].defaultLabel, this.isSearchable(selectId));
+            const newLabel = this.generateLabel(this.selects[selectId].label, this.isSearchable(selectId));
 
             turboSelectWrapper.querySelector('.label').remove();
             this.turbo.showElement(newLabel, turboSelectWrapper.querySelector('.options-wrapper'), 'prepend', 'block', {});
@@ -835,6 +882,8 @@ class Select {
             if (!!!selectedValue) {
                 selectedValue = option.value;
             }
+        } else if (this.turbo.isObject(option) && option.value) {
+            selectedValue = option.value;
         }
 
         const optionInfo = this.getOptionInfoByValue(selectId, selectedValue);
@@ -897,7 +946,7 @@ class Select {
             this.selects[selectId].selectedOption = null;
         }
 
-        label = this.generateLabel(this.selects[selectId].defaultLabel, searchable);
+        label = this.generateLabel(this.selects[selectId].label, searchable);
 
         for (let i = 0; i < options.length; i++) {
             const option = options[i];

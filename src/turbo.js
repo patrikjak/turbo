@@ -39,6 +39,8 @@ class Turbo {
                 notFoundOptionValue: '-',
                 allOptionsSelectedOptionValue: '-',
                 hideDisabledOptions: false,
+                autoSelect: true,
+                customLabel: '',
                 multiselect: {
                     hideSelected: true,
                     hideOptionsAfterSelect: false,

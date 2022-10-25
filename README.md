@@ -39,6 +39,8 @@ turbo.settings.notification.showCloseButton = true;
 turbo.settings.select.searchAlsoValue = false;
 turbo.settings.select.notFoundOptionValue = '-';
 turbo.settings.select.hideDisabledOptions = false;
+turbo.settings.select.autoSelect = true;
+turbo.settings.select.customLabel = '';
 
 //turbo multiselect
 turbo.settings.select.multiselect.hideSelected = true;
@@ -238,7 +240,7 @@ ___
 - multiselect - add a class 'multiselect' for the select element
 
 ```js
-turboSelect.initSelects();
+turboSelect.initSelect();
 
 // this method will replace all selects with turbo select
 ```
