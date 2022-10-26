@@ -25,7 +25,7 @@ class Select {
                 const turboSelectWrapper = selects[i];
                 const selectElement = turboSelectWrapper.querySelector('select');
 
-                if (selectElement) {
+                if (selectElement && this.turbo.getCss(selectElement, 'display') !== 'none') {
                     const turboSelectId = `turbo-select-${i + 1}`;
                     this.generateTurboSelect(turboSelectWrapper, turboSelectId);
                     this.bindSelectActions(turboSelectWrapper);
