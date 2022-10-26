@@ -354,6 +354,16 @@ class Select {
     }
 
     /**
+     * get select id
+     * @param select element
+     * @return {string}
+     */
+    getSelectId(select) {
+        select = this.turbo.beNode(select);
+        return select.closest('.turbo-ui.select').querySelector('.turbo-select').id;
+    }
+
+    /**
      * @param selectId
      * @return {*}
      */
@@ -442,14 +452,14 @@ class Select {
         const open = !options.classList.contains('opened');
 
         if (open) {
-            this.openOptions(options, selectId);
+            this.openOptions(selectId);
 
             if (this.isSearchable(selectId)) {
                 turboSelectWrapper.querySelector('.options-search').focus();
             }
         } else {
             this.reselectOption(selectId);
-            this.closeOptions(options);
+            this.closeOptions(selectId);
         }
     }
 
@@ -493,12 +503,12 @@ class Select {
     }
 
     /**
-     * @param options
      * @param selectId
      */
-    openOptions(options, selectId) {
+    openOptions(selectId) {
         const searchable = this.isSearchable(selectId);
         const multiselect = this.isMultiselect(selectId);
+        const options = this.selects[selectId].wrapper.querySelector('.options');
 
         if (searchable) {
             const label = options.closest('.options-wrapper').querySelector('.label');
@@ -511,7 +521,6 @@ class Select {
             }
         }
 
-        this.turbo.toggleAnimationClass(options, 'animation-slide-in-top', this.animationSettings.duration);
         options.style.display = 'block';
         options.classList.add('opened');
 
@@ -537,14 +546,17 @@ class Select {
     }
 
     /**
-     * @param options
+     * @param selectId
      */
-    closeOptions(options) {
+    closeOptions(selectId) {
+        const options = this.selects[selectId].wrapper.querySelector('.options');
+
         options.classList.remove('opened');
         this.turbo.toggleAnimationClass(options, 'animation-slide-out-top', this.animationSettings.duration);
 
         setTimeout(() => {
             options.style.display = 'none';
+            this.turbo.toggleAnimationClass(options, 'animation-slide-in-top', this.animationSettings.duration);
         }, this.animationSettings.duration);
     }
 
@@ -565,7 +577,7 @@ class Select {
                     }
                 } else {
                     _this.reselectOption(selectId);
-                    _this.closeOptions(options);
+                    _this.closeOptions(selectId);
                 }
 
                 if (_this.isMultiselect(selectId) && _this.isSearchable(selectId)) {
@@ -644,7 +656,7 @@ class Select {
 
         if (this.canSelectOption(option, selectId)) {
             if (!multiselect || this.selects[selectId].settings.multiselect.hideOptionsAfterSelect) {
-                this.closeOptions(optionsWrapper);
+                this.closeOptions(selectId);
             }
 
             setTimeout(() => {
@@ -658,8 +670,16 @@ class Select {
                 } else {
                     option = optionsWrapper.querySelector(`div[data-value="${this.turbo.getData(option, 'value')}"]`);
                 }
+                
+                let selectedValue = null;
 
-                const selectedValue = this.turbo.getData(option, 'value');
+                try {
+                    selectedValue = this.turbo.getData(option, 'value');
+                } catch (e) {
+                    console.error('This option cannot be selected');
+                    return false;
+                }
+
                 const selectedText = option.textContent;
 
                 label.classList.add('selected');
