@@ -561,25 +561,28 @@ $dark-multiselect-selected-font-color: #ffffff;
             cursor: text;
         }
 
-        &.multiselect .label.search {
-            position: initial;
-            top: unset;
-            left: unset;
-            margin-left: 0;
+        &.multiselect .label {
             min-height: 2.65rem;
             height: auto;
 
-            & input {
+            .search {
                 position: initial;
-                max-width: 5rem;
-                width: auto;
-                display: inline-flex;
-                padding-left: 0;
-                min-height: 2.65rem;
-            }
+                top: unset;
+                left: unset;
+                margin-left: 0;
 
-            &.selected input {
-                margin-left: .5rem;
+                & input {
+                    position: initial;
+                    max-width: 5rem;
+                    width: auto;
+                    display: inline-flex;
+                    padding-left: 0;
+                    min-height: 2.65rem;
+                }
+
+                &.selected input {
+                    margin-left: .5rem;
+                }
             }
         }
     }

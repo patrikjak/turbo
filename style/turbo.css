@@ -366,15 +366,17 @@ body.dark-mode .turbo-ui.select .turbo-select {
 .turbo-ui.select .turbo-select.searchable .options-wrapper {
   cursor: text;
 }
-.turbo-ui.select .turbo-select.multiselect .label.search {
+.turbo-ui.select .turbo-select.multiselect .label {
+  min-height: 2.65rem;
+  height: auto;
+}
+.turbo-ui.select .turbo-select.multiselect .label .search {
   position: initial;
   top: unset;
   left: unset;
   margin-left: 0;
-  min-height: 2.65rem;
-  height: auto;
 }
-.turbo-ui.select .turbo-select.multiselect .label.search input {
+.turbo-ui.select .turbo-select.multiselect .label .search input {
   position: initial;
   max-width: 5rem;
   width: auto;
@@ -382,7 +384,7 @@ body.dark-mode .turbo-ui.select .turbo-select {
   padding-left: 0;
   min-height: 2.65rem;
 }
-.turbo-ui.select .turbo-select.multiselect .label.search.selected input {
+.turbo-ui.select .turbo-select.multiselect .label .search.selected input {
   margin-left: 0.5rem;
 }
 .turbo-ui.select .options-wrapper {
