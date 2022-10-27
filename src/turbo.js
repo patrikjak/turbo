@@ -1,3 +1,5 @@
+const sanitizeHtml = require('sanitize-html');
+
 class Turbo {
 
     /**
@@ -293,8 +295,9 @@ class Turbo {
      * @param content
      * @param buttons
      * @param id
+     * @param selectInstance
      */
-    showModal(heading, content, buttons = {}, id) {
+    showModal(heading, content, buttons = {}, id = null, selectInstance = null) {
         const overlay = this.createElement('div', null, {
             class: ['overlay'],
         });
@@ -313,13 +316,16 @@ class Turbo {
             class: ['modal-header'],
         });
 
-        modalHeader.innerHTML = `<h2>${heading}</h2>`;
+        modalHeader.innerHTML = sanitizeHtml(`<h2>${heading}</h2>`);
 
         const modalContent = this.createElement('div', null, {
             class: ['modal-content'],
         });
 
-        modalContent.innerHTML = content;
+        modalContent.innerHTML = sanitizeHtml(content, {
+            allowedTags: sanitizeHtml.defaults.allowedTags.concat(['select', 'option', 'input', 'textarea', 'img']),
+            allowedAttributes: false,
+        });
 
         const modalFooter = this.createElement('div', null, {
             class: ['modal-footer'],
@@ -373,6 +379,8 @@ class Turbo {
 
         this.showElement(overlay);
 
+        selectInstance.initSelect();
+
         if (buttons?.primary?.callback) {
             document.querySelector('.turbo-modal .modal-primary').addEventListener('click', () => {
                 buttons.primary.callback();
@@ -381,6 +389,10 @@ class Turbo {
 
         document.querySelector('.turbo-modal .modal-secondary').addEventListener('click', () => {
             this.hideElement('.overlay');
+
+            for (const id of selectInstance.getLastInitialized()) {
+                delete selectInstance.selects[id];
+            }
         });
     }
 

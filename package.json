@@ -17,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/patrikjak/turbo/issues"
   },
-  "homepage": "https://github.com/patrikjak/turbo#readme"
+  "homepage": "https://github.com/patrikjak/turbo#readme",
+  "dependencies": {
+    "sanitize-html": "^2.7.2"
+  }
 }

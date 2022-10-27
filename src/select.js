@@ -1,8 +1,8 @@
+const turboClass = require('./turbo');
+
 class Select {
 
     constructor() {
-        const turboClass = require('./turbo');
-
         this.turbo = new turboClass();
         this.selects = {};
         this.custom = {};
@@ -12,6 +12,7 @@ class Select {
             duration: 150,
         };
         this.beautySpace = 10; // multiselect options || input
+        this.lastInitialized = [];
     }
 
     /**
@@ -21,17 +22,36 @@ class Select {
         const selects = parent.querySelectorAll('.turbo-ui.select');
 
         if (selects) {
+            this.lastInitialized = [];
+
             for (let i = 0; i < selects.length; i++) {
                 const turboSelectWrapper = selects[i];
                 const selectElement = turboSelectWrapper.querySelector('select');
 
                 if (selectElement && this.turbo.getCss(selectElement, 'display') !== 'none') {
-                    const turboSelectId = `turbo-select-${i + 1}`;
+                    const turboSelectId = this.generateSelectId(i + 1);
                     this.generateTurboSelect(turboSelectWrapper, turboSelectId);
                     this.bindSelectActions(turboSelectWrapper);
                 }
             }
         }
+    }
+
+    /**
+     * @return {[]}
+     */
+    getLastInitialized() {
+        return this.lastInitialized;
+    }
+
+    generateSelectId(id) {
+        let selectId = `turbo-select-${id}`;
+
+        if (this.selects[selectId]) {
+            selectId = `turbo-select-${Object.keys(this.selects).length + 1}`;
+        }
+
+        return selectId;
     }
 
     /**
@@ -339,6 +359,8 @@ class Select {
             searchable: searchable,
             multiselect: multiselect,
         };
+
+        this.lastInitialized.push(id);
 
         if (multiselect) {
             const hideSelectedOptions = wrapperId && typeof this.custom[wrapperId]?.settings?.multiselect?.hideSelected !== 'undefined';
