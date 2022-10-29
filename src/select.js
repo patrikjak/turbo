@@ -94,6 +94,7 @@ class Select {
         this.createInstance(defaultOptions, turboSelectId, (mainElements.label ? labelText : null), searchable, multiselect);
 
         this.updateLabel(turboSelectId);
+        this.selectSelected(turboSelectId);
     }
 
     /**
@@ -319,6 +320,23 @@ class Select {
         }
 
         return arrayOfOptions;
+    }
+
+    /**
+     * @param selectId
+     */
+    selectSelected(selectId) {
+        const realOptions = this.selects[selectId].wrapper.closest('.turbo-ui.select').querySelectorAll('option');
+
+        for (const realOption of realOptions) {
+            if (realOption.selected) {
+                this.selectOption({value: realOption.value}, selectId);
+
+                if (!this.isMultiselect(selectId)) {
+                    break;
+                }
+            }
+        }
     }
 
     /**
