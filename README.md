@@ -159,11 +159,15 @@ turbo.getCss(element, 'display');
 //> 
 ```
 
-``showModal(heading, content, buttons, id)`` - show modal window with custom heading and content
+``showModal(heading, content, buttons, id, selectInstance)`` - show modal window with custom heading and content
 buttons value can be changed too, id will be '{id}-modal',
 cancel button will be always displayed
 
+You can pass turbo select instance for automatic initialization of the selects
+
 ```js
+const turboSelect = turboStart.select;
+
 turbo.showModal('Today\'s news', '<p>Some news</p>', {
         primary: {
             hide: false,
@@ -176,7 +180,7 @@ turbo.showModal('Today\'s news', '<p>Some news</p>', {
             id: 'custom-button-id',
             text: 'Do not share',
         }
-    }, 'news');
+    }, 'news', turboSelect);
 ```
 
 ``showConfirmation(text, buttons)`` - show confirmation modal, returns promise by
@@ -232,12 +236,10 @@ turbo.collectFormData('#my-form');
 ## Turbo Select
 ___
 
-``initSelects()`` - init turbo selects
+``initSelects(parentElement)`` - init turbo selects
 
 - hide original select element and show custom
 - original select element must be in wrapper with classes .turbo-ui.select
-- searchable select - add a class 'searchable' for the select element
-- multiselect - add a class 'multiselect' for the select element
 
 ```js
 turboSelect.initSelect();
@@ -245,9 +247,50 @@ turboSelect.initSelect();
 // this method will replace all selects with turbo select
 ```
 
+### Searchable
+Add 'searchable' class to the original select element
+
+### Multiselect
+Add 'multiselect' class to the original select element
+- do not forget to add 'multiple' attribute
+
+``selectOption(option, selectId, triggerChange)`` - select option for passed selectId
+
+- option can be **object with property 'value'** or **option element** (div with data-value attribute)
+
+- if triggerChange is set to true, change event will be fired
+
+```js
+let option = document.querySelector('div[data-value="5"]');
+// let option = {value: 5};
+
+turboSelect.selectOption(option, 'turbo-select-1', true);
+```
+
+``openOptions(selectId)`` - open wrapper with options
+
+```js
+turboSelect.openOptions('turbo-select-1');
+```
+
+``closeOptions(selectId)`` - close wrapper with options
+
+```js
+turboSelect.closeOptions('turbo-select-1');
+```
+
+``getSelectId(select)`` - return id for the select
+
+```js
+const selectElement = document.querySelector('select#be-turbo');
+const selectId = turboSelect.getSelectId(selectElement);
+
+//> selectId = 'turbo-select-1'
+```
+
 ## Turbo Validator
 ___
-turboValidator.validate() - validate inputs
+``turboValidator.validate(form, validationRules, stopAfterFirst, showErrors)`` - validate inputs
 
 - if form will not be valid, errors appear automatically
 
