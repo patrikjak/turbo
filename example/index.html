@@ -17,6 +17,9 @@
                 <a href="#intro">General info</a>
             </div>
             <div class="item">
+                <a href="#scrollbar">Scrollbar</a>
+            </div>
+            <div class="item">
                 <a href="#button">Button</a>
             </div>
             <div class="item">
@@ -65,6 +68,21 @@
                 <p>If you fill input, the label will not be floating</p>
             </div>
         </div>
+
+        <div class="section" id="scrollbar">
+            <h2>Scrollbar</h2>
+            <div class="section-info">
+                <p>Make your scrollbar prettier</p>
+                <p class="top-space"><code>$scrollbar-color</code> - scrollbar color</p>
+                <p><code>$scrollbar-background-color</code> - scrollbar background color</p>
+            </div>
+            <div class="example pretty-scrollbar">
+                <div class="box">
+                    <p>Halvah ice cream soufflé cake biscuit dessert. Cotton candy jelly dragée chocolate donut fruitcake macaroon biscuit. Tootsie roll cheesecake tiramisu carrot cake dessert. Dessert sweet powder lollipop lemon drops halvah. Macaroon topping donut sesame snaps brownie bonbon shortbread candy canes fruitcake. Powder bonbon shortbread marzipan shortbread icing. Cookie danish icing jelly beans cake lollipop bonbon lemon drops. Muffin cheesecake topping jelly donut halvah gingerbread jujubes. Marshmallow apple pie caramels apple pie topping. Apple pie macaroon soufflé lollipop dessert. Cotton candy marzipan cupcake jelly croissant ice cream. Liquorice pie fruitcake ice cream cupcake. Pudding pie muffin chocolate jelly beans jujubes cookie muffin bear claw. Gingerbread carrot cake chocolate croissant marzipan pudding.</p>
+                </div>
+            </div>
+        </div>
+
         <div class="section" id="button">
             <h2>Button</h2>
             <div class="section-info">
@@ -159,7 +177,6 @@
                 <p><code>$select-border-color</code> - select border color</p>
                 <p><code>$select-label-color</code> - select label font color</p>
                 <p><code>$select-arrow-color</code> - select arrow background color</p>
-                <p><code>$select-scrollbar-color</code> - select scrollbar color</p>
 
                 <p class="top-space"><code>$select-active-item-color</code> - select active option font color</p>
                 <p><code>$select-active-item-weight</code> - select active option font weight</p>
@@ -199,7 +216,7 @@
                         </div>
                     </div>
 
-                    <div class="turbo-ui select">
+                    <div class="turbo-ui select pretty-scrollbar">
                         <div class="turbo-select" id="turbo-select-3">
                             <div class="options-wrapper">
                                 <div class="label">Option 3</div>
@@ -251,6 +268,7 @@
             <h3 class="section-heading">Searchable</h3>
             <div class="group group-3">
                 <div class="turbo-ui select">
+                    <label>Label</label>
                     <div class="turbo-select" id="turbo-select-4">
                         <div class="options-wrapper">
                             <div class="label search">
@@ -271,6 +289,7 @@
                 </div>
 
                 <div class="turbo-ui select">
+                    <label>Label</label>
                     <div class="turbo-select" id="turbo-select-7">
                         <div class="options-wrapper">
                             <div class="label search selected">
@@ -349,7 +368,7 @@
             </div>
             <div class="example">
                 <div class="overlay">
-                    <div class="turbo-modal">
+                    <div class="turbo-modal pretty-scrollbar">
                         <div class="modal-header">
                             <h2>Create a new product</h2>
                         </div>

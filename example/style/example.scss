@@ -154,6 +154,14 @@ code {
             top: 2rem;
             left: 2rem;
         }
+
+        & .box {
+            width: 10rem;
+            height: 10rem;
+            overflow-y: auto;
+            border: solid 0.0625rem #000000;
+            padding: 1rem;
+        }
     }
 }
 

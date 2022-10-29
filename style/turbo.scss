@@ -65,6 +65,48 @@ $error: #b3261e;
 // --- GENERAL ---
 // --------------------------------------------------
 
+// --------------------------------------------------
+// SCROLLBAR
+// --------------------------------------------------
+
+$scrollbar-color: $brand-blue;
+$scrollbar-background-color: #f5f5f5;
+
+$dark-scrollbar-color: $brand-blue;
+$dark-scrollbar-background-color: #f5f5f5;
+
+.pretty-scrollbar {
+    ::-webkit-scrollbar,
+    ::-webkit-scrollbar {
+        width: .5rem;
+        height: .5rem;
+    }
+
+    ::-webkit-scrollbar-track,
+    ::-webkit-scrollbar-track {
+        background-color: $scrollbar-background-color;
+        border-radius: $scrollbar-color;
+
+        body.dark-mode & {
+            background-color: $dark-scrollbar-background-color;
+            border-radius: $dark-scrollbar-color;
+        }
+    }
+
+    ::-webkit-scrollbar-thumb,
+    ::-webkit-scrollbar-thumb {
+        background-color: $scrollbar-color;
+        border-radius: .125rem;
+
+        body.dark-mode & {
+            background-color: $dark-scrollbar-color;
+        }
+    }
+}
+
+// --------------------------------------------------
+// --- SCROLLBAR ---
+// --------------------------------------------------
 
 // --------------------------------------------------
 // BUTTON
@@ -468,7 +510,6 @@ $select-options-background: #fbfbfb;
 $select-border-color: #cccccc;
 $select-label-color: #000000;
 $select-arrow-color: #000000;
-$select-scrollbar-color: $brand-blue;
 
 $select-active-item-color: #000000;
 $select-active-item-weight: 600;
@@ -489,7 +530,6 @@ $dark-select-options-background: #fbfbfb;
 $dark-select-border-color: #cccccc;
 $dark-select-label-color: #000000;
 $dark-select-arrow-color: #000000;
-$dark-select-scrollbar-color: $brand-blue;
 
 $dark-select-active-item-color: #000000;
 $dark-select-active-item-weight: 600;
@@ -505,30 +545,9 @@ $dark-multiselect-selected-background: $brand-blue;
 $dark-multiselect-selected-font-color: #ffffff;
 
 .turbo-ui.select {
-    ::-webkit-scrollbar,
-    ::-webkit-scrollbar {
-        width: .5rem;
-        height: .5rem;
-    }
-
-    ::-webkit-scrollbar-track,
-    ::-webkit-scrollbar-track {
-        background-color: #f5f5f5;
-        border-radius: $select-scrollbar-color;
-
-        body.dark-mode & {
-            border-radius: $dark-select-scrollbar-color;
-        }
-    }
-
-    ::-webkit-scrollbar-thumb,
-    ::-webkit-scrollbar-thumb {
-        background-color: $select-scrollbar-color;
-        border-radius: .125rem;
-
-        body.dark-mode & {
-            background-color: $dark-select-scrollbar-color;
-        }
+    & label {
+        display: inline-block;
+        margin-bottom: .5rem;
     }
 
     & .turbo-select {
