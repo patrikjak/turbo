@@ -254,6 +254,7 @@ Add 'searchable' class to the original select element
 Add 'multiselect' class to the original select element
 - do not forget to add 'multiple' attribute
 
+### Select methods
 ``selectOption(option, selectId, triggerChange)`` - select option for passed selectId
 
 - option can be **object with property 'value'** or **option element** (div with data-value attribute)
