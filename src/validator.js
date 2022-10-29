@@ -144,15 +144,23 @@ class Validator {
      */
     validateData(inputName, validationData) {
         const testValue = validationData['value'];
-        const rules = validationData['rules']
+        const rules = validationData['rules'];
         const validation = {
             rules: rules,
             fieldName: '',
+            error: '',
         };
 
-        if (this.turbo.isObject(rules) && rules.hasOwnProperty('fieldName') && rules.hasOwnProperty('fieldName')) {
-            validation['rules'] = validationData.rules.rules ? validationData.rules.rules : [];
-            validation['fieldName'] = validationData.rules.fieldName;
+        if (this.turbo.isObject(rules)) {
+            validation.rules = validationData.rules.rules ? validationData.rules.rules : [];
+
+            if (rules.hasOwnProperty('fieldName')) {
+                validation.fieldName = validationData.rules.fieldName;
+            }
+
+            if (rules.hasOwnProperty('error') && !this.turbo.isEmpty(rules.error)) {
+                validation.error = rules.error;
+            }
         }
 
         validation.rules = validation.rules.split('|');
@@ -173,12 +181,16 @@ class Validator {
 
                 let ruleError = this.rulesErrors[ruleName];
 
-                if (!valid && ruleError.indexOf('{additionalValue}') > -1) {
-                    ruleError = ruleError.replace('{additionalValue}', additionalValue);
-                }
+                if (validation.error === '') {
+                    if (!valid && ruleError.indexOf('{additionalValue}') > -1) {
+                        ruleError = ruleError.replace('{additionalValue}', additionalValue);
+                    }
 
-                if (!valid && ruleError.indexOf('{fieldName}') > -1 && validation.fieldName) {
-                    ruleError = ruleError.replace('{fieldName}', `"${validation.fieldName}"`);
+                    if (!valid && ruleError.indexOf('{fieldName}') > -1 && validation.fieldName) {
+                        ruleError = ruleError.replace('{fieldName}', `"${validation.fieldName}"`);
+                    }
+                } else {
+                    ruleError = validation.error;
                 }
 
                 return {

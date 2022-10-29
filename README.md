@@ -298,9 +298,12 @@ ___
 const rules = {
     name: {
         rules: 'required|max:8',
-        fieldName: 'your turbo name' // define custom label for the field
+        fieldName: 'your turbo name', // define custom label for the field
     },
-    surname: 'required',
+    surname: {
+        rules: 'required',
+        error: 'We need your surnmame', // custom error for the field
+    },
     agreement: 'accepted', // checkbox must be checked
 };
 const form = document.querySelector('#form');
