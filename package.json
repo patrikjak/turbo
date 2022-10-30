@@ -25,5 +25,10 @@
   "homepage": "https://github.com/patrikjak/turbo#readme",
   "dependencies": {
     "sanitize-html": "^2.7.2"
-  }
+  },
+  "directories": {
+    "example": "example",
+    "lib": "lib"
+  },
+  "devDependencies": {}
 }
