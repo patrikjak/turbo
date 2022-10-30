@@ -11,7 +11,12 @@
     "type": "git",
     "url": "git+https://github.com/patrikjak/turbo.git"
   },
-  "keywords": [],
+  "keywords": [
+    "starterpack",
+    "helper",
+    "validation",
+    "custom select"
+  ],
   "author": "Patrik Jakab <patrikjak@gmail.com>",
   "license": "ISC",
   "bugs": {
