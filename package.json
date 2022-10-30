@@ -1,7 +1,7 @@
 {
   "name": "turbo-start",
   "version": "1.0.0",
-  "description": "",
+  "description": "Build your projects faster",
   "main": "index.js",
   "type": "module",
   "scripts": {
