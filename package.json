@@ -1,6 +1,6 @@
 {
   "name": "turbostart",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Build your projects faster with useful methods, custom select and validation",
   "main": "index.js",
   "type": "module",
