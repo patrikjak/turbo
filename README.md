@@ -4,7 +4,7 @@ Useful JS functions to use
 
 ## Installation
 
-``npm install turbostarter``
+``npm install turbostart``
 
 ___
 
