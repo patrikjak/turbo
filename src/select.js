@@ -1,4 +1,3 @@
-//const turboClass = require('./turbo');
 import Turbo from "./turbo";
 
 class Select {
