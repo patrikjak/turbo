@@ -1,5 +1,3 @@
-import sanitizeHtml from "sanitize-html";
-
 class Turbo {
 
     /**
@@ -316,16 +314,13 @@ class Turbo {
             class: ['modal-header'],
         });
 
-        modalHeader.innerHTML = sanitizeHtml(`<h2>${heading}</h2>`);
+        modalHeader.innerHTML = `<h2>${heading}</h2>`;
 
         const modalContent = this.createElement('div', null, {
             class: ['modal-content'],
         });
 
-        modalContent.innerHTML = sanitizeHtml(content, {
-            allowedTags: sanitizeHtml.defaults.allowedTags.concat(['select', 'option', 'input', 'textarea', 'img']),
-            allowedAttributes: false,
-        });
+        modalContent.innerHTML = content;
 
         const modalFooter = this.createElement('div', null, {
             class: ['modal-footer'],
