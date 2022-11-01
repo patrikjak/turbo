@@ -1,9 +1,10 @@
+import Turbo from "./turbo";
+
 class Validator {
 
     constructor() {
-        const turboClass = require('./turbo');
 
-        this.turbo = new turboClass();
+        this.turbo = new Turbo();
 
         this.rulesErrors = {
             required: 'Field {fieldName} is required',
@@ -250,4 +251,4 @@ class Validator {
 
 }
 
-module.exports = Validator;
+export default Validator;

@@ -1,9 +1,10 @@
-const turboClass = require('./turbo');
+//const turboClass = require('./turbo');
+import Turbo from "./turbo";
 
 class Select {
 
     constructor() {
-        this.turbo = new turboClass();
+        this.turbo = new Turbo();
         this.selects = {};
         this.custom = {};
         this.animationSettings = {
@@ -1366,4 +1367,4 @@ class Select {
 
 }
 
-module.exports = Select;
+export default Select;

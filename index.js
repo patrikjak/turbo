@@ -1,13 +1,13 @@
-const Turbo = require('./src/turbo');
-const Select = require('./src/select');
-const Validator = require('./src/validator');
+import Turbo from "./src/turbo";
+import Select from "./src/select";
+import Validator from "./src/validator";
 
 const turboInstance = new Turbo();
 const selectInstance = new Select();
 const validatorInstance = new Validator();
 
-module.exports = {
-    turbo: turboInstance,
-    select: selectInstance,
-    validator: validatorInstance,
+export {
+    turboInstance as turbo,
+    selectInstance as select,
+    validatorInstance as validator,
 };
