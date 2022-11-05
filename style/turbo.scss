@@ -61,6 +61,10 @@ $error: #b3261e;
     }
 }
 
+.turbo-ui {
+    box-sizing: border-box;
+}
+
 // --------------------------------------------------
 // --- GENERAL ---
 // --------------------------------------------------
@@ -120,7 +124,8 @@ $dark-button-background: $brand-green;
 $dark-button-border-color: $brand-green;
 $dark-button-font-color: #ffffff;
 
-button {
+button,
+a.button {
     padding: .5rem 2rem;
     background-color: $button-background;
     color: $button-font-color;
@@ -129,6 +134,7 @@ button {
     border-radius: 0.1875rem;
     font-size: 1rem;
     transition-duration: $transition-duration;
+    text-decoration: none;
 
     body.dark-mode & {
         background-color: $dark-button-background;
@@ -319,7 +325,7 @@ $dark-checkbox-background: $light-grey;
 $dark-checkbox-checked-background: #337ab7;
 $dark-radio-border-color: #cccccc;
 
-$input-left: 1rem;
+$input-left: .75rem;
 
 .turbo-ui.checkbox,
 .turbo-ui.radio,
@@ -327,6 +333,7 @@ $input-left: 1rem;
     position: relative;
     padding: 1rem 1rem 1rem $input-left;
     text-align: left;
+    margin-top: 1rem;
 
     label {
         cursor: pointer;

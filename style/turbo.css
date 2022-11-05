@@ -35,6 +35,10 @@
   transform: rotate(-45deg);
 }
 
+.turbo-ui {
+  box-sizing: border-box;
+}
+
 .pretty-scrollbar ::-webkit-scrollbar,
 .pretty-scrollbar ::-webkit-scrollbar {
   width: 0.5rem;
@@ -60,7 +64,8 @@ body.dark-mode .pretty-scrollbar ::-webkit-scrollbar-thumb {
   background-color: #00627a;
 }
 
-button {
+button,
+a.button {
   padding: 0.5rem 2rem;
   background-color: #99C24d;
   color: #ffffff;
@@ -69,12 +74,15 @@ button {
   border-radius: 0.1875rem;
   font-size: 1rem;
   transition-duration: 300ms;
+  text-decoration: none;
 }
-body.dark-mode button {
+body.dark-mode button,
+body.dark-mode a.button {
   background-color: #99C24d;
   border-color: #99C24d;
 }
-button:hover {
+button:hover,
+a.button:hover {
   transform: scale(1.05, 1.05);
 }
 
@@ -190,8 +198,9 @@ body.dark-mode .turbo-ui.input input[type=submit] {
 .turbo-ui.radio,
 .turbo-ui.toggle {
   position: relative;
-  padding: 1rem 1rem 1rem 1rem;
+  padding: 1rem 1rem 1rem 0.75rem;
   text-align: left;
+  margin-top: 1rem;
 }
 .turbo-ui.checkbox label,
 .turbo-ui.radio label,
@@ -216,7 +225,7 @@ body.dark-mode .turbo-ui.input input[type=submit] {
   background-color: #e8e8e8;
   border: solid #e8e8e8 0.125rem;
   border-radius: 0.125rem;
-  left: 1rem;
+  left: 0.75rem;
   transition: 0.3s;
 }
 body.dark-mode .turbo-ui.checkbox label:before,
@@ -265,7 +274,7 @@ body.dark-mode .turbo-ui.toggle input:checked + label:before {
 .turbo-ui.checkbox input:checked + label:after,
 .turbo-ui.radio input:checked + label:after,
 .turbo-ui.toggle input:checked + label:after {
-  left: 1rem;
+  left: 0.75rem;
   background-color: transparent;
   width: 0.9rem;
   height: 0.35rem;
@@ -291,7 +300,7 @@ body.dark-mode .turbo-ui.radio input:checked + label:before {
   height: 1rem;
   transform: translate(0, 0.25rem);
   border-radius: 50%;
-  left: calc(1.25rem);
+  left: calc(1rem);
   border: solid #337ab7 0.125rem;
 }
 body.dark-mode .turbo-ui.radio input:checked + label:after {
@@ -318,7 +327,7 @@ body.dark-mode .turbo-ui.radio input:checked + label:after {
   width: 1.52rem;
   height: 1.52rem;
   border-radius: 50%;
-  left: 1.34rem;
+  left: 1.09rem;
   transform: none;
   transition: cubic-bezier(0.68, -0.55, 0.27, 1.55) 300ms;
 }
@@ -337,7 +346,7 @@ body.dark-mode .turbo-ui.toggle input:checked + label:before {
   height: 1.52rem;
   background-color: #e8e8e8;
   transform: translateX(1.8rem);
-  left: 1.34rem;
+  left: 1.09rem;
   border: none;
 }
 body.dark-mode .turbo-ui.toggle input:checked + label:after {
