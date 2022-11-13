@@ -126,6 +126,7 @@ $dark-button-font-color: #ffffff;
 
 button,
 a.button {
+    display: inline-block;
     padding: .5rem 2rem;
     background-color: $button-background;
     color: $button-font-color;
@@ -296,6 +297,7 @@ $dark-submit-font-color: $brand-white;
         cursor: pointer;
         transition-duration: .3s;
         font-size: 1rem;
+        white-space: normal;
 
         body.dark-mode & {
             background-color: $dark-submit-background-color;

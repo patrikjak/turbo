@@ -66,6 +66,7 @@ body.dark-mode .pretty-scrollbar ::-webkit-scrollbar-thumb {
 
 button,
 a.button {
+  display: inline-block;
   padding: 0.5rem 2rem;
   background-color: #99C24d;
   color: #ffffff;
@@ -184,6 +185,7 @@ body.dark-mode .turbo-ui.input input:not([type=submit]):focus + label, body.dark
   cursor: pointer;
   transition-duration: 0.3s;
   font-size: 1rem;
+  white-space: normal;
 }
 body.dark-mode .turbo-ui.input input[type=submit] {
   background-color: #99C24d;
