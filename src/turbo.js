@@ -374,7 +374,9 @@ class Turbo {
 
         this.showElement(overlay);
 
-        selectInstance.initSelect();
+        if (selectInstance) {
+            selectInstance.initSelect();
+        }
 
         if (buttons?.primary?.callback) {
             document.querySelector('.turbo-modal .modal-primary').addEventListener('click', () => {
