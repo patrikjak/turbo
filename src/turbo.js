@@ -314,7 +314,7 @@ class Turbo {
             class: ['modal-header'],
         });
 
-        modalHeader.innerHTML = `<h2>${heading}</h2>`;
+        modalHeader.innerHTML = `<h4>${heading}</h4>`;
 
         const modalContent = this.createElement('div', null, {
             class: ['modal-content'],
