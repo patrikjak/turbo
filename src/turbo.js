@@ -345,6 +345,14 @@ class Turbo {
             primaryButton = this.createElement('button', buttonText, buttonAttributes);
         }
 
+        let closeButton = '';
+
+        if (buttons?.close) {
+            closeButton = this.createElement('div', null, {
+                class: ['close-button'],
+            });
+        }
+
         const cancelButtonText = buttons?.cancel?.text ? buttons.cancel.text : this.settings.text.cancel;
         const cancelButtonAttributes = {
             class: ['modal-secondary'],
@@ -367,6 +375,11 @@ class Turbo {
         }
 
         this.showElement(modalHeader, modalWrapper, 'append', 'block', {});
+
+        if (closeButton !== '') {
+            this.showElement(closeButton, modalHeader, 'append', 'block', {});
+        }
+
         this.showElement(modalContent, modalWrapper, 'append', 'block', {});
         this.showElement(modalFooter, modalWrapper, 'append', 'flex', {});
 
@@ -387,8 +400,10 @@ class Turbo {
         document.querySelector('.turbo-modal .modal-secondary').addEventListener('click', () => {
             this.hideElement('.overlay');
 
-            for (const id of selectInstance.getLastInitialized()) {
-                delete selectInstance.selects[id];
+            if (selectInstance) {
+                for (const id of selectInstance.getLastInitialized()) {
+                    delete selectInstance.selects[id];
+                }
             }
         });
     }
