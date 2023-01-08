@@ -512,7 +512,7 @@ class Turbo {
 
         const closeButton = `<div class="close-button"></div>`;
 
-        const headingElement = this.createElement('h2', heading);
+        const headingElement = this.createElement('h6', heading);
         const messageElement = this.createElement('p', message);
 
         this.showElement(headingElement, content, 'append', 'block', {});
