@@ -34,6 +34,8 @@ turbo.settings.allSelected = 'All options have been selected';
 turbo.settings.notification.autoHide = true;
 turbo.settings.notification.autoHideTime = 4000;
 turbo.settings.notification.showCloseButton = true;
+turbo.settings.notification.icon = false;
+turbo.settings.notification.headingSize = 'h4';
 
 // turbo select
 turbo.settings.select.searchAlsoValue = false;

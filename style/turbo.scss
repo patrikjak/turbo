@@ -1019,149 +1019,110 @@ $dark-modal-primary-font-color: $brand-white;
 // NOTIFICATION
 // --------------------------------------------------
 
-$notification-background: #f5f5f5;
-$notification-font-color: #000000;
+$notification-info-color: #485DFF;
+$notification-info-light-color: #E1E5FF;
+$notification-success-color: #5EB329;
+$notification-success-light-color: #E5F3DC;
+$notification-warning-color: #fa8611;
+$notification-warning-light-color: #FFECD8;
+$notification-error-color: #FF616A;
+$notification-error-light-color: #FFE5E7;
 
-$notification-info-color: $info;
-$notification-success-color: $success;
-$notification-warning-color: $warning;
-$notification-error-color: $error;
-
-$dark-notification-background: $light-grey;
-$dark-notification-font-color: #000000;
-
-$dark-notification-info-color: $info;
-$dark-notification-success-color: $success;
-$dark-notification-warning-color: $warning;
-$dark-notification-error-color: $error;
+$dark-notification-info-color: #485DFF;
+$dark-notification-info-light-color: #E1E5FF;
+$dark-notification-success-color: #5EB329;
+$dark-notification-success-light-color: #E5F3DC;
+$dark-notification-warning-color: #fa8611;
+$dark-notification-warning-light-color: #FFECD8;
+$dark-notification-error-color: #FF616A;
+$dark-notification-error-light-color: #FFE5E7;
 
 .turbo-notification {
+    display: inline-flex !important;
+    align-items: center;
+    padding: 1rem;
+    border-radius: .5rem;
+    border: solid .0625rem $notification-info-color;
+    background-color: $notification-info-light-color;
+    max-width: 20%;
     position: fixed;
-    top: 5%;
+    top: 8%;
     right: 3%;
-    background-color: $notification-background;
-    width: 40vh;
-    border-radius: 0.3125rem;
-    display: flex;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    z-index: 99999;
-    color: $notification-font-color;
-
-    body.dark-mode & {
-        background-color: $dark-notification-background;
-        color: $dark-notification-font-color;
-    }
-
-    & h2 {
-        padding: 7% 15%;
-        border-bottom: solid 0.125rem $notification-info-color;
-        margin: 0;
-        font-weight: inherit;
-
-        body.dark-mode & {
-            border-color: $dark-notification-info-color;
-        }
-    }
-
-    & p {
-        padding: 5% 10%;
-    }
+    z-index: 10;
+    box-shadow: 0 .5rem 1rem #00031629;
 
     & .notification-level {
-        width: 2%;
-        background-color: $notification-info-color;
+        margin: .5rem 1rem .5rem .5rem;
 
-        body.dark-mode & {
-            background-color: $dark-notification-info-color;
+        & .level-icon {
+            display: flex;
         }
     }
 
-    &.info {
-        & .notification-level {
+    & .close-button {
+        position: absolute;
+        top: 1.1875rem;
+        right: 1rem;
+        width: 1rem;
+        height: 1rem;
+        margin-left: 1.5rem;
+
+        &:before,
+        &:after {
             background-color: $notification-info-color;
-
-            body.dark-mode & {
-                background-color: $dark-notification-info-color;
-            }
+            top: .4rem;
         }
+    }
 
-        & h2 {
-            border-bottom-color: $notification-info-color;
+    & .notification-content {
+        color: #000000;
+        padding-right: 2rem;
+        word-break: break-word;
+        font-size: .875rem;
 
-            body.dark-mode & {
-                border-bottom-color: $dark-notification-info-color;
-            }
+        & h6 {
+            margin: 0;
+            font-size: .875rem;
+        }
+        
+        & p {
+            margin: 0;
         }
     }
 
     &.success {
-        & .notification-level {
-            background-color: $notification-success-color;
+        background-color: $notification-success-light-color;
+        border-color: $notification-success-color;
 
-            body.dark-mode & {
-                background-color: $dark-notification-success-color;
-            }
-        }
-
-        & h2 {
-            border-bottom-color: $notification-success-color;
-
-            body.dark-mode & {
-                border-bottom-color: $dark-notification-success-color;
+        & .close-button {
+            &:before,
+            &:after {
+                background-color: $notification-success-color;
             }
         }
     }
 
     &.warning {
-        & .notification-level {
-            background-color: $notification-warning-color;
+        background-color: $notification-warning-light-color;
+        border-color: $notification-warning-color;
 
-            body.dark-mode & {
-                background-color: $dark-notification-warning-color;
-            }
-        }
-
-        & h2 {
-            border-bottom-color: $notification-warning-color;
-
-            body.dark-mode & {
-                border-bottom-color: $dark-notification-warning-color;
+        & .close-button {
+            &:before,
+            &:after {
+                background-color: $notification-warning-color;
             }
         }
     }
 
     &.error {
-        & .notification-level {
-            background-color: $notification-error-color;
+        background-color: $notification-error-light-color;
+        border-color: $notification-error-color;
 
-            body.dark-mode & {
-                background-color: $dark-notification-error-color;
+        & .close-button {
+            &:before,
+            &:after {
+                background-color: $notification-error-color;
             }
-        }
-
-        & h2 {
-            border-bottom-color: $notification-error-color;
-
-            body.dark-mode & {
-                border-bottom-color: $dark-notification-error-color;
-            }
-        }
-    }
-
-    & .notification-content {
-        width: 98%;
-    }
-
-    & .close-button {
-        width: 1.5rem;
-        height: 1.5rem;
-        position: absolute;
-        top: 10%;
-        right: 5%;
-
-        &:before,
-        &:after {
-            height: .125rem;
         }
     }
 }

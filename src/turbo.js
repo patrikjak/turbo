@@ -33,6 +33,8 @@ class Turbo {
                 autoHide: true,
                 autoHideTime: 4000,
                 showCloseButton: true,
+                icon: true,
+                headingSize: 'h6',
             },
             select: {
                 searchAlsoValue: false,
@@ -353,6 +355,8 @@ class Turbo {
             });
         }
 
+        // secondary hide
+
         const cancelButtonText = buttons?.cancel?.text ? buttons.cancel.text : this.settings.text.cancel;
         const cancelButtonAttributes = {
             class: ['modal-secondary'],
@@ -398,14 +402,22 @@ class Turbo {
         }
 
         document.querySelector('.turbo-modal .modal-secondary').addEventListener('click', () => {
-            this.hideElement('.overlay');
-
-            if (selectInstance) {
-                for (const id of selectInstance.getLastInitialized()) {
-                    delete selectInstance.selects[id];
-                }
-            }
+            this.closeModal(selectInstance);
         });
+
+        document.querySelector('.turbo-modal .close-button').addEventListener('click', () => {
+            this.closeModal(selectInstance);
+        });
+    }
+
+    closeModal(selectInstance) {
+        this.hideElement('.overlay');
+
+        if (selectInstance) {
+            for (const id of selectInstance.getLastInitialized()) {
+                delete selectInstance.selects[id];
+            }
+        }
     }
 
     /**
@@ -496,8 +508,13 @@ class Turbo {
      * @param message notification message
      * @param heading
      * @param level
+     * @param animation
      */
-    notify(message, heading = this.settings.text.info, level = 'error') {
+    notify(message, heading = this.settings.text.info, level = 'error', animation = {
+        duration: this.settings.animation.duration,
+        showClass: this.settings.animation.showClass,
+        hideClass: this.settings.animation.hideClass,
+    }) {
         const notificationWrapper = this.createElement('div', null, {
             class: ['turbo-notification', level],
         });
@@ -506,13 +523,17 @@ class Turbo {
             class: ['notification-level'],
         });
 
+        if (this.settings.notification.icon) {
+            notificationLevel.innerHTML = `<div class="level-icon">${this.notificationLevelIcon(level)}</div>`;
+        }
+
         const content = this.createElement('div', null, {
             class: ['notification-content'],
         });
 
         const closeButton = `<div class="close-button"></div>`;
 
-        const headingElement = this.createElement('h6', heading);
+        const headingElement = this.createElement(this.settings.notification.headingSize, heading);
         const messageElement = this.createElement('p', message);
 
         this.showElement(headingElement, content, 'append', 'block', {});
@@ -525,7 +546,8 @@ class Turbo {
 
         this.showElement(content, notificationWrapper, 'append', 'block', {});
         this.showElement(notificationWrapper, 'body', 'append', 'flex', {
-            showClass: 'animation-slide-in-fwd-left',
+            showClass: animation.showClass,
+            duration: animation.duration
         });
 
         let isHidden = false;
@@ -533,7 +555,7 @@ class Turbo {
         if (this.settings.notification.showCloseButton || !this.settings.notification.autoHide) {
             document.querySelector('.turbo-notification .close-button').addEventListener('click', (e) => {
                 this.hideElement(e.target.closest('.turbo-notification'), false, {
-                    hideClass: 'animation-slide-out-bck-left',
+                    hideClass: animation.hideClass,
                 });
                 isHidden = true;
             });
@@ -543,11 +565,25 @@ class Turbo {
             setTimeout(() => {
                 if (!isHidden) {
                     this.hideElement(notificationWrapper, false, {
-                        hideClass: 'animation-slide-out-bck-left',
+                        hideClass: animation.hideClass,
                     });
                     isHidden = true;
                 }
             }, this.settings.notification.autoHideTime + this.settings.animation.duration);
+        }
+    }
+
+    notificationLevelIcon(level = 'info') {
+        switch (level) {
+            case "success":
+                return "<svg id=\"success\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\"><rect width=\"24\" height=\"24\" fill=\"none\"/><g transform=\"translate(0.5)\"><path d=\"M20.7,9.4A10.9,10.9,0,0,1,21,12,10,10,0,1,1,11,2a9.884,9.884,0,0,1,5.3,1.5\" fill=\"none\" stroke=\"#5eb329\" stroke-width=\"2\"/><path d=\"M7,10l4,4L22,3\" fill=\"none\" stroke=\"#5eb329\" stroke-linecap=\"square\" stroke-width=\"2\"/></g></svg>";
+            case "warning":
+                return "<svg id=\"warning\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24.055\" height=\"24\" viewBox=\"0 0 24.055 24\"><g transform=\"translate(0.028)\"><rect width=\"24\" height=\"24\" fill=\"none\"/><g transform=\"translate(-0.002 0.501)\"><path d=\"M1.243,18.953,10.152,2.111a2.093,2.093,0,0,1,3.7,0l8.909,16.842A2.079,2.079,0,0,1,20.908,22H3.092a2.079,2.079,0,0,1-1.849-3.047Z\" fill=\"none\" stroke=\"#f81\" stroke-linecap=\"square\"stroke-width=\"2\"/><path d=\"M12,8v6\" fill=\"none\" stroke=\"#f81\" stroke-linecap=\"square\" stroke-width=\"2\"/><circle cx=\"1.5\" cy=\"1.5\" r=\"1.5\" transform=\"translate(10.5 16)\" fill=\"#f81\"/></g></g></svg>\n";
+            case "error":
+                return "<svg id=\"error\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\"><rect width=\"24\" height=\"24\" fill=\"none\"/><g><path d=\"M16.556,1H7.444L1,7.444v9.112L7.444,23h9.112L23,16.556V7.444Z\" fill=\"none\" stroke=\"#ff616a\" stroke-linecap=\"square\" stroke-width=\"2\"/><path d=\"M12,7v6\" fill=\"none\" stroke=\"#ff616a\" stroke-linecap=\"square\" stroke-width=\"2\"/><circle cx=\"1\" cy=\"1\" r=\"1\" transform=\"translate(11 16)\" fill=\"#ff616a\"/></g></svg>";
+            case "info":
+            default:
+                return "<svg id=\"info\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\"><path d=\"M12,0A12,12,0,1,0,24,12,12.013,12.013,0,0,0,12,0Zm2.658,18.284c-.661.26-2.952,1.354-4.272.191a1.676,1.676,0,0,1-.59-1.318,15.978,15.978,0,0,1,.919-3.957,5.7,5.7,0,0,0,.231-1.313c0-.7-.266-.887-.987-.887a3.31,3.31,0,0,0-1.1.257l.195-.8a7.64,7.64,0,0,1,2.621-.71c1.269,0,2.2.633,2.2,1.837A5.585,5.585,0,0,1,13.7,12.96l-.73,2.582c-.151.522-.424,1.673,0,2.014a2.214,2.214,0,0,0,1.887-.071l-.195.8ZM13.452,8a1.5,1.5,0,1,1,1.5-1.5,1.5,1.5,0,0,1-1.5,1.5Z\" fill=\"#256eff\"/></svg>";
         }
     }
 
