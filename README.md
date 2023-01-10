@@ -35,7 +35,7 @@ turbo.settings.notification.autoHide = true;
 turbo.settings.notification.autoHideTime = 4000;
 turbo.settings.notification.showCloseButton = true;
 turbo.settings.notification.icon = false;
-turbo.settings.notification.headingSize = 'h4';
+turbo.settings.notification.headingSize = 'h6';
 
 // turbo select
 turbo.settings.select.searchAlsoValue = false;
@@ -193,7 +193,7 @@ clicking cancel (_reject()_) or confirm button (_resolve()_)
 turbo.showConfirmation('Are your sure?');
 ```
 
-``notify(message, heading, level)`` - show notification with custom message and heading,
+``notify(message, heading, level, animation)`` - show notification with custom message and heading,
 notification can have one of levels below, level - notification left border color
 
 ```js
