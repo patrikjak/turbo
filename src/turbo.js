@@ -355,24 +355,24 @@ class Turbo {
             });
         }
 
-        // secondary hide
+        let secondaryButton = null;
 
-        const cancelButtonText = buttons?.cancel?.text ? buttons.cancel.text : this.settings.text.cancel;
-        const cancelButtonAttributes = {
-            class: ['modal-secondary'],
-        };
+        if (!buttons?.secondary?.hide) {
+            const secondaryButtonText = buttons?.cancel?.text ? buttons.cancel.text : this.settings.text.cancel;
+            const secondaryButtonAttributes = {
+                class: ['modal-secondary'],
+            };
 
-        if (buttons?.cancel?.class) {
-            cancelButtonAttributes.class.push(...buttons.cancel.class);
+            if (buttons?.cancel?.class) {
+                secondaryButtonAttributes.class.push(...buttons.cancel.class);
+            }
+
+            if (buttons?.cancel?.id) {
+                secondaryButtonAttributes.id = buttons.cancel.id;
+            }
+
+            secondaryButton = this.createElement('button', secondaryButtonText, secondaryButtonAttributes);
         }
-
-        if (buttons?.cancel?.id) {
-            cancelButtonAttributes.id = buttons.cancel.id;
-        }
-
-        const cancelButton = this.createElement('button', cancelButtonText, cancelButtonAttributes);
-
-        this.showElement(cancelButton, modalFooter, 'append', 'block', {});
 
         if (primaryButton !== '') {
             this.showElement(primaryButton, modalFooter, 'append', 'block', {});
@@ -401,9 +401,13 @@ class Turbo {
             });
         }
 
-        document.querySelector('.turbo-modal .modal-secondary').addEventListener('click', () => {
-            this.closeModal(selectInstance);
-        });
+        if (secondaryButton) {
+            this.showElement(secondaryButton, modalFooter, 'append', 'block', {});
+
+            document.querySelector('.turbo-modal .modal-secondary').addEventListener('click', () => {
+                this.closeModal(selectInstance);
+            });
+        }
 
         document.querySelector('.turbo-modal .close-button').addEventListener('click', () => {
             this.closeModal(selectInstance);
